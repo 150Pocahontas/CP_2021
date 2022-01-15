@@ -145,15 +145,15 @@
 
 \begin{center}\large
 \begin{tabular}{ll}
-\textbf{Grupo} nr. & 99 (preencher)
+\textbf{Grupo} nr. & 26
 \\\hline
-a11111 & Nome1 (preencher)
+a89528 & Luís Magalhães
 \\
-a22222 & Nome2 (preencher)
+a85829 & Meriam Khammassi
 \\
-a33333 & Nome3 (preencher)
+a89578 & Patícia Pereira
 \\
-a44444 & Nome4 (preencher, se aplicável, ou apagar)
+a88220 & Xavier Mota
 \end{tabular}
 \end{center}
 
@@ -351,9 +351,9 @@ mergeMerkleTree = cataFTree (g_mergeMerkleTree)
 que compõe a \FTree\ (à cabeça) com a lista de \FTree s (como filhos), fazendo um ``merge'' dos valores intermédios. Veja o seguinte exemplo de aplicação da função |mergeMerkleTree|:
 \begin{verbatim}
  > l = [Comp 3 (Unit 1, Unit 2), Comp 7 (Unit 3, Unit 4)]
- > 
+ >
  > m = Comp 10 (Unit 3, Unit 7)
- > 
+ >
  > mergeMerkleTree m l
 Comp 10 (Comp 3 (Unit 1,Unit 2),Comp 7 (Unit 3,Unit 4))
 \end{verbatim}
@@ -557,7 +557,7 @@ Para o caso em que |l = [x]|, i.e. o tamanho de |l| é |1|, assuma que |pairL [x
 \begin{itemize}\em
 \item      Para todas as listas |l| de tamanho maior que 1,
 a lista |map p1 (pairL l)| é a lista original |l| a menos do último elemento.
-Analogamente, a lista |map p2 (pairL l)|  é a lista original |l| a menos do primeiro elemento. 
+Analogamente, a lista |map p2 (pairL l)|  é a lista original |l| a menos do primeiro elemento.
 \end{itemize}
 \end{enumerate}
 
@@ -1143,33 +1143,144 @@ Valoriza-se a escrita de \emph{pouco} código que corresponda a soluções
 simples e elegantes.
 
 \subsection*{Problema 1} \label{pg:P1}
+
+\vspace{0.5cm}
 Listas vazias:
+
+\begin{eqnarray*}
+\start
+  outNEList\ .\ inNEList  = id
+%
+\just\equiv{\textcolor{blue}{inNEList}}
+%
+  outNEList\ .\ [ single ,\ cons] = id
+%
+\just\equiv{\textcolor{blue}{Fusão-+\ (20)}}
+%
+  [outNEList\ .\  single,\ outNEList\ .\  cons] = id
+%
+\just\equiv{\textcolor{blue}{Universal-+\ (17)}}
+%
+      |lcbr(
+    id . i1 = outNEList . single
+  )(
+    id . i2 = outNEList . cons
+    )|
+%
+\just\equiv{\textcolor{blue}{Natural-id\ (1),\ Igualdade\ Extensional\ (69),\ Def-comp\ (70)}}
+%
+      |lcbr(
+    outNEList (single a) = i1 a
+
+  )(
+    outNEList (cons (h,t)) = i2 (h,t)
+  )|
+\end{eqnarray*}
+
+\vspace{2cm}
+
+\xymatrixcolsep{2pc}\xymatrixrowsep{6pc}
+\centerline{\xymatrix{
+   [a]\
+                \ar@@/^2pc/ [rr]^-{|outNEList|} & \qquad \cong
+&    a + (a \times [a])
+      \ar@@/^2pc/ [ll]^-{|inNEList|}
+\\
+}}
+
+\vspace{0.5cm}
+
 \begin{code}
-outNEList [a]   = undefined
-outNEList (h:t) = undefined
+outNEList [a]   = i1 a
+outNEList (h:t) = i2 (h,t)
 
-baseNEList f g = undefined
+baseNEList f g = f -|- ( f >< g)
 
-recNEList  f   = undefined
+recNEList  f   =  baseNEList id f
 
-cataNEList g   = undefined
+cataNEList g  =  g . recNEList (cataNEList  g) . outNEList
 
-anaNEList  g   = undefined
+anaNEList  g   =  inNEList . recNEList(anaNEList g) . g
 
-hyloNEList h g = undefined
+hyloNEList h g = cataNEList h . anaNEList g
 \end{code}
+
+\vspace{0.5cm}
 Gene do anamorfismo:
+\vspace{0.5cm}\par
+
+\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   [a]\ \ar[d]_-{|anaList list2LTree|}
+            \ar[rr]^-{|g_list2LTree|} & \qquad
+&    a + ([a] \times [a])  \ar[d]^{|recLTree (anaList list2LTree)|}
+\\
+    LTree\ a \ar@@/^2pc/ [rr]^-{|outLTree|} & \qquad \cong
+     &  a + (LTree\ a \times LTree\ a)
+      \ar@@/^2pc/ [ll]^-{|inLTree|}
+}}
+
+\vspace{0.5cm}
+
 \begin{code}
-g_list2LTree = undefined
+g_list2LTree [a] = i1 a
+g_list2LTree l = i2 (splitAt (((1) + 1) `div` 2) l)
 \end{code}
+
+\vspace{0.5cm}
 Gene do catamorfismo:
+\vspace{0.5cm}
+
+\xymatrixcolsep{5pc}\xymatrixrowsep{3pc}
+\centerline
+{\xymatrix{
+    c + (FTree\ \mathbb{Z}\ (\mathbb{Z}, c) \times FTree\ \mathbb{Z}\ (\mathbb{Z}\ ,\ c))
+    \ar[d]_{g\_lTree2MTree} \\
+    FTree\ \mathbb{Z}\ (\mathbb{Z}\ ,\  c)
+  }
+}
+
+Auxiliares:
+
+\begin{code}
+g_lTg_lTree2MTree_c c = Unit (Main.hash c, c)
+g_lTree2MTree_aux (Unit (h1,t1), Unit (h2,t2)) =
+    Comp (concHash(h1,h2)) (Unit (h1,t1), Unit (h2,t2))
+
+g_lTree2MTree_aux (Comp h1 (tree1,tree2),Unit (h2,t2)) =
+    Comp (concHash(h1,h2)) (Comp h2 (tree1,tree2),Unit (h2,t2))
+g_lTree2MTree_aux (Unit (h1,t1), Comp h2 (tree1,tree2)) =
+        Comp (concHash(h1,h2)) (Unit (h1,t1) ,Comp h2 (tree1,tree2))
+g_lTree2MTree_aux (Comp h1 (tree11,tree12) , Comp h2 (tree21,tree22)) =
+    Comp (concHash(h1,h2)) (Comp h1 (tree11,tree12) , Comp h2 (tree21,tree22))
+\end{code}
+
+
 \begin{code}
 g_lTree2MTree :: Hashable c => Either c (FTree Integer (Integer, c), FTree Integer (Integer, c)) -> FTree Integer (Integer, c)
-g_lTree2MTree = undefined
+g_lTree2MTree = either g_lTg_lTree2MTree_c g_lTree2MTree_aux
 \end{code}
 Gene de |mroot| ("get Merkle root"):
+\vspace{0.5cm}
+
+\xymatrixcolsep{2pc}\xymatrixrowsep{6pc}
+\centerline{\xymatrix{
+   FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a) \ar[d]_-{|cataNat (g_mroot)|}
+                \ar@@/^2pc/ [rr]^-{|outFTree|} & \qquad \cong
+&  (\mathbb{Z}\ , a) + \mathbb{Z}\ \times (FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a) \times FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a))
+  \ar[d]^{|recFTree(cataNat (g_mroot))|}
+\\
+    \mathbb{Z} &
+&  (\mathbb{Z}\ , a) + \mathbb{Z}\ \times (\mathbb{Z}\ \times \mathbb{Z})
+    \ar[ll]^-{|g_mroot|}
+}}
+
+Auxiliares:
 \begin{code}
-g_mroot = undefined
+
+\end{code}
+\begin{code}
+g_mroot = firsts
 \end{code}
 Valorização:
 
@@ -1270,14 +1381,14 @@ prop_reconst l = undefined
 \end{code}
 \end{propriedade}
 
-\begin{propriedade} 
+\begin{propriedade}
 Assuma que uma linha (de um mapa) é prefixa de uma outra linha. Então a representação
 da primeira linha também prefixa a representação da segunda linha:
 \end{propriedade}
 \begin{code}
 prop_prefix2 l l' = undefined
 \end{code}
-\begin{propriedade} 
+\begin{propriedade}
 Para qualquer linha (de um mapa), a sua representação  deve conter um número de símbolos correspondentes a um tipo célula igual
 ao número de vezes que esse tipo de célula aparece na linha em questão.
 \end{propriedade}
@@ -1288,7 +1399,7 @@ count :: (Eq a) => a -> [a] -> Int
 count = undefined
 \end{code}
 
-\begin{propriedade} 
+\begin{propriedade}
 Para qualquer lista |l| a função |markMap l| é idempotente.
 \end{propriedade}
 \begin{code}
@@ -1296,7 +1407,7 @@ inBounds m (x,y) = undefined
 
 prop_idemp2 l m = undefined
 \end{code}
-\begin{propriedade} 
+\begin{propriedade}
 Todas as posições presentes na lista dada como argumento irão fazer com que
 as células correspondentes no mapa deixem de ser |Free|.
 \end{propriedade}
@@ -1304,7 +1415,7 @@ as células correspondentes no mapa deixem de ser |Free|.
 prop_extr2 l m = undefined
 \end{code}
 
-\begin{propriedade} 
+\begin{propriedade}
 Quanto maior for o tamanho máximo dos caminhos  mais caminhos que alcançam a
 posição alvo iremos encontrar:
 \end{propriedade}

@@ -69,7 +69,7 @@ dsq n = (cataLTree (either id add) . fmap (\n->2*n-1) . (anaLTree dfacd)) (1,n)
 {--
 dsq 0 = 0
 dsq n = (hyloLTree (either id add) (fdfacd nthodd)) (1,n)
-        where   nthodd n = 2*n - 1 
+        where   nthodd n = 2*n - 1
                 fdfacd f (n,m) | n==m  = i1   (f n)
                                | otherwise = i2   ((n,k),(k+1,m))
                                         where k = div (n+m) 2
@@ -96,7 +96,7 @@ mSort l = hyloLTree (either singl merge) lsplit l
 
 merge (l,[])                  = l
 merge ([],r)                  = r
-merge (x:xs,y:ys) | x < y     = x : merge(xs,y:ys) 
+merge (x:xs,y:ys) | x < y     = x : merge(xs,y:ys)
                   | otherwise = y : merge(x:xs,ys)
 
 lsplit [x] = i1 x
@@ -155,7 +155,7 @@ instance Strong LTree
 tnat :: Monoid c => (a -> c) -> Either a (c, c) -> c
 tnat f = either f (uncurry mappend)
 
--- monoid reduction 
+-- monoid reduction
 
 monLTree f = cataLTree (tnat f)
 
@@ -180,7 +180,7 @@ type Zipper a = [ Deriv a ]
 
 plug :: Zipper a -> LTree a -> LTree a
 plug [] t = t
-plug ((Dr False l):z) t = Fork (plug z t,l) 
+plug ((Dr False l):z) t = Fork (plug z t,l)
 plug ((Dr True  r):z) t = Fork (r,plug z t)
 
 -- (8) Advanced --------------------------------------------------------------
