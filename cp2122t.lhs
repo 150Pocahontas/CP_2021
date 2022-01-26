@@ -1134,18 +1134,11 @@ instance Arbitrary Cell where
 %----------------- Soluções dos alunos -----------------------------------------%
 
 \section{Soluções dos alunos}\label{sec:resolucao}
-Os alunos devem colocar neste anexo as suas soluções para os exercícios
-propostos, de acordo com o "layout" que se fornece. Não podem ser
-alterados os nomes ou tipos das funções dadas, mas pode ser adicionado
-texto, diagramas e/ou outras funções auxiliares que sejam necessárias.
-
-Valoriza-se a escrita de \emph{pouco} código que corresponda a soluções
-simples e elegantes.
 
 \subsection*{Problema 1} \label{pg:P1}
 
-\vspace{0.5cm}
-Listas vazias:
+Para grarantir que |list2LTree| não aceita listas vazias é pedido para definir |outNEList|.
+Uma vez que conhecemos o |inNEList| podemos calcular o seu inverso da seguinte forma:
 
 \begin{eqnarray*}
 \start
@@ -1177,19 +1170,21 @@ Listas vazias:
   )|
 \end{eqnarray*}
 
-\vspace{2cm}
+\vspace{0.5cm}
+Assim o tipo do |outNEList| é:
+\vspace{0.5cm}
 
 \xymatrixcolsep{2pc}\xymatrixrowsep{6pc}
 \centerline{\xymatrix{
-   [a]\
+   A^+\
                 \ar@@/^2pc/ [rr]^-{|outNEList|} & \qquad \cong
-&    a + (a \times [a])
+&    A + (A \times A^+)
       \ar@@/^2pc/ [ll]^-{|inNEList|}
 \\
 }}
 
 \vspace{0.5cm}
-
+Listas não vazias:
 \begin{code}
 outNEList [a]   = i1 a
 outNEList (h:t) = i2 (h,t)
@@ -1208,99 +1203,194 @@ hyloNEList h g = cataNEList h . anaNEList g
 \vspace{0.5cm}
 Gene do anamorfismo:
 \vspace{0.5cm}\par
+Para descobrir o gene do anamorfismo, recorremos ao diagrama do anamorfismo das LTree.
+\vspace{0.5cm}
 
 \xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
-   [a]\ \ar[d]_-{|anaList list2LTree|}
+   A^+\ \ar[d]_-{|anaList g_list2LTree|}
             \ar[rr]^-{|g_list2LTree|} & \qquad
-&    a + ([a] \times [a])  \ar[d]^{|recLTree (anaList list2LTree)|}
+&    A + (A^+ \times A^+)  \ar[d]^{|recLTree (anaList g_list2LTree)|}
 \\
-    LTree\ a \ar@@/^2pc/ [rr]^-{|outLTree|} & \qquad \cong
-     &  a + (LTree\ a \times LTree\ a)
+    LTree\ A \ar@@/^2pc/ [rr]^-{|outLTree|} & \qquad \cong
+     &  A + (LTree\ A \times LTree\ A)
       \ar@@/^2pc/ [ll]^-{|inLTree|}
 }}
 
 \vspace{0.5cm}
+Assim sendo percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias, ou no caso da lista singular devolve-a.
+Uma vez que estamos a trabalhar com listas não vazias resolvemos aplicar o |outNElist| que definimos anteriormente.
+Como este produz em vez de duas listas um elemento e uma lista, decidimos tornar o ùnico numa lista singular.
+Assim o resultado de |list2LTree| será uma árvore com o primeiro de cada sublista à esquerda
 
+\begin{center}
+\fbox{\begin{minipage}{23em}
 \begin{code}
-g_list2LTree [a] = i1 a
-g_list2LTree l = i2 (splitAt (((1) + 1) `div` 2) l)
+g_list2LTree =  (id -|- singl>< id) . outNEList
 \end{code}
-
+\end{minipage}}
+\end{center}
 \vspace{0.5cm}
 Gene do catamorfismo:
 \vspace{0.5cm}
 
-\xymatrixcolsep{5pc}\xymatrixrowsep{3pc}
-\centerline
-{\xymatrix{
-    c + (FTree\ \mathbb{Z}\ (\mathbb{Z}, c) \times FTree\ \mathbb{Z}\ (\mathbb{Z}\ ,\ c))
-    \ar[d]_{g\_lTree2MTree} \\
-    FTree\ \mathbb{Z}\ (\mathbb{Z}\ ,\  c)
-  }
-}
+\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   LTree\ A\ \ar[d]_-{|cataNat (g_lTree2MTree)|}
+                \ar[rr]^-{|outLTree|} & \qquad
+&  A\ + (LTree\ A \times LTree\ A)
+  \ar[d]^{|recLTree(cataNat (g_lTree2MTree))|}
+\\
+    Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A) &
+&  A\ + (Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \times Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A))
+    \ar[ll]^-{|g_lTree2MTree|}
+}}
 
-Auxiliares:
+\vspace{0.5cm}
+Da análise do diagrama retiramos que, este gene, no caso de receber um único elemento,
+produz um Unit, ou seja, uma folha, com um par em que o segundo elemento é a
+transação e o primeiro o seu valor de |hash|, que calculamos com a auxiliar fornecida |hash|.
+No caso de receber duas |FTree| necessitamos as juntar e concatenar os hashs com outra auxiliar fornecida, a |concHash|.
+\par Após estudar o conteúdo do ficheiro |FTree.hs| e o enunciado concluimos que, em |FTree a c|, o |a| é concatenação dos |hash|
+e o |c| o par (hash,transação).
+\par Para encontrar o valor de hash de uma |FTree| precisamos de definir as seguintes auxiliares:
 
 \begin{code}
-g_lTg_lTree2MTree_c c = Unit (Main.hash c, c)
-g_lTree2MTree_aux (Unit (h1,t1), Unit (h2,t2)) =
-    Comp (concHash(h1,h2)) (Unit (h1,t1), Unit (h2,t2))
-
-g_lTree2MTree_aux (Comp h1 (tree1,tree2),Unit (h2,t2)) =
-    Comp (concHash(h1,h2)) (Comp h2 (tree1,tree2),Unit (h2,t2))
-g_lTree2MTree_aux (Unit (h1,t1), Comp h2 (tree1,tree2)) =
-        Comp (concHash(h1,h2)) (Unit (h1,t1) ,Comp h2 (tree1,tree2))
-g_lTree2MTree_aux (Comp h1 (tree11,tree12) , Comp h2 (tree21,tree22)) =
-    Comp (concHash(h1,h2)) (Comp h1 (tree11,tree12) , Comp h2 (tree21,tree22))
+getHash (Unit c) = p1 c
+getHash (Comp a t) = a
+calcHash (t1,t2) = concHash(getHash t1 , getHash t2)
 \end{code}
 
+Assim para obter o resultado pretendido usando o |inFTree| das |FTree| que recebe o tipo:
+\par\hspace{0.3cm}\xymatrix{( \mathbb{Z} \times A) + (\mathbb{Z} \times (Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \times Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A)))}
 
+\begin{center}
+\fbox{\begin{minipage}{40em}
 \begin{code}
 g_lTree2MTree :: Hashable c => Either c (FTree Integer (Integer, c), FTree Integer (Integer, c)) -> FTree Integer (Integer, c)
-g_lTree2MTree = either g_lTg_lTree2MTree_c g_lTree2MTree_aux
+g_lTree2MTree = inFTree . ((split (Main.hash)  id) -|- (split calcHash id))
 \end{code}
+\end{minipage}}
+\end{center}
+
 Gene de |mroot| ("get Merkle root"):
+\vspace{0.2cm}
+\par Uma vez que |computeMerkleTree| produz uma |MerkleTree| temos que o diagrama de |mroot| é:
 \vspace{0.5cm}
 
-\xymatrixcolsep{2pc}\xymatrixrowsep{6pc}
+\xymatrixcolsep{1pc}\xymatrixrowsep{6pc}
 \centerline{\xymatrix{
-   FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a) \ar[d]_-{|cataNat (g_mroot)|}
-                \ar@@/^2pc/ [rr]^-{|outFTree|} & \qquad \cong
-&  (\mathbb{Z}\ , a) + \mathbb{Z}\ \times (FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a) \times FTree\ \mathbb{Z}\ (\mathbb{Z}\ , a))
+   FTree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \ar[d]_-{|cataNat (g_mroot)|}
+                \ar[rr]^-{|outFTree|} & \qquad
+&  (\mathbb{Z}\ \times A) + (\mathbb{Z}\ \times (FTree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \times FTree\ \mathbb{Z}\ (\mathbb{Z}\ , A)))
   \ar[d]^{|recFTree(cataNat (g_mroot))|}
 \\
     \mathbb{Z} &
-&  (\mathbb{Z}\ , a) + \mathbb{Z}\ \times (\mathbb{Z}\ \times \mathbb{Z})
+&  (\mathbb{Z}\ \times A) + \mathbb{Z}\ \times (\mathbb{Z}\ \times \mathbb{Z})
     \ar[ll]^-{|g_mroot|}
 }}
 
-Auxiliares:
-\begin{code}
+\vspace{0.5cm}
+Sendo a |Merkle Root| o valor de |hash| de todo o bloco, no caso de ser uma àrvore singular
+o resultado será a hash da transação, caso contrário a hash do nodo mais exterior, ou seja a raiz.
+Como podemos verificar pelo diagrama, o gene será um either dos primeiros elementos,
+pelo que podemos usar a auxiliar fornecida |firts|.
 
-\end{code}
+\begin{center}
+\fbox{\begin{minipage}{12em}
 \begin{code}
 g_mroot = firsts
 \end{code}
-Valorização:
+\end{minipage}}
+\end{center}
+
+Quando executamos |mroot trs| o valor obtido é -13593070566482620546,
+correspondente ao valor de hash da |Merkle Root|, ou seja o valor de hash mais exterior
+ao executar |computeMerkleTree trs|.
+Ao alterar uma transação, este valor vai alterado,
+conforme a diferença entre os valores de hash que a mudança na transação causou.
+\vspace{0.5cm}
+\par Valorização:
+\vspace{0.5cm}
+\par Para descobrir o gene do anamorfismo |pairList| recorremos ao seu diagrama.
+\vspace{0.5cm}
+
+\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   A^*\ \ar[d]_-{|anaList g_pairsList|}
+            \ar[rr]^-{|g_list2LTree|} & \qquad
+&    1\ + ((A \times A) \times A^*)  \ar[d]^{|recList (anaList g_pairsList)|}
+\\
+    (A,A)^* \ar@@/^2pc/ [rr]^-{|outList|} & \qquad \cong
+     &  1\ + ((A\times A) \times (A,A)^*)
+      \ar@@/^2pc/ [ll]^-{|inList|}
+}}
+
+\vspace{0.5cm}
+\par Pela análise do diagrama, concluimos que o gene |g_pairsList| recebe uma lista e produz no,
+ou uma lista vazia ou um par e uma lista. Tendo em conta que a lista tem de ser par, o primeiro passo foi utilizar a auxiliar
+|getEvenBlock|. Em seguida utilizamos uma vez o |outList|, olhando para o segundo elemento do either produzido por este,
+para obter o par precisavamos de mais um elemento da lista pelo que utilizamos um split, ficando com o tipo:
+\hspace{0.3cm}\xymatrix{1\ + (A \times (A \times A^*))}.
+Com este tipo simplesmente nos basta um passo para produzir o que pretendemos,
+sendo que usamos a |assocl| estudada nas aulas.
 
 \begin{code}
 pairsList :: [a] -> [(a, a)]
 pairsList = anaList (g_pairsList)
+\end{code}
+\begin{center}
+\fbox{\begin{minipage}{38em}
+\begin{code}
 
-g_pairsList = undefined
+g_pairsList = (id -|- assocl) . (id -|- id >< split head tail) . outList . getEvenBlock
+\end{code}
+\end{minipage}}
+\end{center}
 
+Mais uma vez recorremos a um diagrama para compreender os genes pedidos
+e os seus tipos. Para chegar à sua versão final tivemos de compreender
+o |conquer|, o que é um either, em que o lado esuqerdo é o |head| de uma lista,
+que tendo em conta  o que este produz, será uma lista com uma |MerkleTree| singular,
+isto é a |Merkle Root|. Conhecendo o tipo da |joinMerkleTree| foi possivel aber o tipo do
+lado direito do either, e assim obter o resto do diagrama.
+\vspace{0.5cm}
+
+\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+    \mathbb{Z}^+ \ar[d]_-{|(cataList conquer) . (anaList divide)|}
+                \ar [rr]^-{|divide|} & \quad \qquad
+&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree\ \mathbb{Z}\ \mathbb{Z})^+ \times\ \mathbb{Z}^+
+          \ar[d]^{|recNEList(cataList conquer . anaList divide)|}
+\\
+    FTree\ \mathbb{Z}\ \mathbb{Z} &
+&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree \mathbb{Z}\ \mathbb{Z})^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z})
+          \ar[ll]^-{|conquer|}
+}}
+
+\vspace{0.5cm}
+Distinto da primeira parte deste problema, em |FTree a c| c corresponde ao valor de ache de uma folha, da |Unit|, e o a
+corresponde à concatenação dos filhos.
+\par Para resolver estes genes tivemos de perceber em que fase do algoritmo estes se encontram.
+Sendo que já temos a uma lista de pares a ser produzida, com a |pairsList|, resta-nos os passos 4 e 5 do algoritmo.
+Pelo diagrama anterior, concluimos que o divide será o passo 4, uma vez que este apresenta uma lista de sub-árvores como mencionado.
+\par Para o divide primeiro apliocamos o |outNEList|, para ficar com um tipo identico ao pretendido, precisando agora apenas de
+transpormar o elemento singular em |FTree| e
+
+
+\begin{code}
 classicMerkleTree :: Hashable a => [a] -> FTree Integer Integer
 classicMerkleTree = (hyloNEList conquer divide) . (map Main.hash)
 
-divide = undefined
+divide = ((singl . Unit) -|- (Comp) ) . outNEList
 
 conquer = either head joinMerkleTree where
       joinMerkleTree (l, m) = mergeMerkleTree m (evenMerkleTreeList l)
       mergeMerkleTree = cataFTree (either h1 h2)
-      h1 c l = undefined
-      h2 (c, (f, g)) l = undefined
-      evenMerkleTreeList = undefined
+      h1 c l = c
+      h2 (c, (f, g)) l = (c ,((head l) , last l))
+      evenMerkleTreeList = getEvenBlock
+
 \end{code}
 
 \subsection*{Problema 2}
@@ -1309,36 +1399,37 @@ conquer = either head joinMerkleTree where
 wc_w_final :: [Char] -> Int
 wc_w_final = wrapper . worker
 worker = cataList (either g1 g2)
-wrapper = undefined
+wrapper =  undefined
 \end{code}
 Gene de |worker|:
 \begin{code}
-g1 = undefined
+g1 = nil
 g2 = undefined
 \end{code}
 Genes |h = either h1 h2| e |k = either k1 k2| identificados no cálculo:
 \begin{code}
-h1 = undefined
-h2 = undefined
+h1 = const 0
+h2 (c,l) = if (sp c) && (p2 l) then (p1 l + 1 ) else (p1 l)
 
-k1 = undefined
-k2 = undefined
+k1 = True
+k2 = sp . p1
 \end{code}
 
 \subsection*{Problema 3}
 
 \begin{code}
 inX :: Either u (i, (X u i, X u i)) -> X u i
-inX = undefined
+inX = either XLeaf n where
+  n (i,(l,r)) = Node i l r
 
-outX (XLeaf u) = undefined
-outX (Node i l r) = undefined
+outX (XLeaf u) = Left u
+outX (Node i l r) = Right (i,(l,r))
 
-baseX f h g = undefined
+baseX f h g = f -|- (h  >< (g >< g))
 
-recX f = undefined
+recX f = baseX id id f
 
-cataX g = undefined
+cataX g = g . (recX (cataX g)) . outX
 \end{code}
 
 Inserir a partir daqui o resto da resolução deste problema:
@@ -1348,17 +1439,29 @@ Inserir a partir daqui o resto da resolução deste problema:
 \end{code}
 
 \subsection*{Problema 4}
-
+Sendo o \textbf{Pairl} um anamorfismo de listas podemos
 \begin{code}
 pairL :: [a] -> [(a,a)]
 pairL = anaList g where
-  g = undefined
+  g = (id -|- assocl) . (id -|- id >< split head id) . outNEList
 \end{code}
+Para conseguir chegar ao resutado de f2 precisamos primeiro de entender O que um mapa representa e como modifica-lo.
+A primiera conclusão a que chegamos, pelo exemplo apresentado no problema 4 do Capitulo 1 da |markMap| é que a posição (0,0) a posição (0,1) a acima, ea posição (1,0) a da direita é a ultima linha da esquerda do mapa.
+Ou seja uma posição é do tipo (linha,coluna),
+De seguida, pela analise dos mapas fornecidos, percebemos que na matriz o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
+Chegando a estas conclusões podemos afirmar que, após obter o resultado ao executar a toCell entre duas posições é:
+\begin{itemize}
+\item \textbf{Lft} iremos passar a atualizar a posição seguinte no mesmo elemnto da matriz
+\item \textbf{Rght} iremos passar a atualizar a posição anterior no mesmo elemnto da matriz
+\item \textbf{UP} iremos passar a mesma a posição no elemento seguinte da matriz
+\item \textbf{Down} iremos passar a mesma a posição no elemento anterior da matriz
+\end{itemize}
 
 \begin{code}
 markMap :: [Pos] -> Map -> Map
 markMap l = cataList (either (const id) f2) (pairL l) where
   f2 = undefined
+
 \end{code}
 
 \begin{code}
@@ -1368,16 +1471,16 @@ scout m s t = cataNat (either f1 ((>>= f2 m s))) where
   f2 = undefined
 \end{code}
 
-
 \paragraph{Valorização} (opcional) Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
 
-\begin{propriedade}  A lista correspondente ao lado esquerdo
+\begin{propriedade}
+A lista correspondente ao lado esquerdo
 dos pares em (|pairL l|) é a lista original |l| a menos do último elemento.
 Analogamente, a lista correspondente ao lado direito
 dos pares em (|pairL l|) é a lista original |l| a menos do primeiro elemento:
 
 \begin{code}
-prop_reconst l = undefined
+prop_reconst l = (map p1 (pairL l)) == (init l) && (map p2 (pairL l)) == (tail l)
 \end{code}
 \end{propriedade}
 
@@ -1386,7 +1489,7 @@ Assuma que uma linha (de um mapa) é prefixa de uma outra linha. Então a repres
 da primeira linha também prefixa a representação da segunda linha:
 \end{propriedade}
 \begin{code}
-prop_prefix2 l l' = undefined
+prop_prefix2 l l' = (tail l') == (tail l)
 \end{code}
 \begin{propriedade}
 Para qualquer linha (de um mapa), a sua representação  deve conter um número de símbolos correspondentes a um tipo célula igual
@@ -1396,14 +1499,16 @@ ao número de vezes que esse tipo de célula aparece na linha em questão.
 prop_nmbrs l c = undefined
 
 count :: (Eq a) => a -> [a] -> Int
-count = undefined
+count = curry unccount where
+  uncount (a,[]) = 0
+  unccount (a,l) = if (a == head l) then uncount (a,tail l) + 1 else uncount (a,tail l)
 \end{code}
 
 \begin{propriedade}
 Para qualquer lista |l| a função |markMap l| é idempotente.
 \end{propriedade}
 \begin{code}
-inBounds m (x,y) = undefined
+inBounds m (x,y) = (nlines m) == x && (ncols m) == y
 
 prop_idemp2 l m = undefined
 \end{code}
