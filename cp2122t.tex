@@ -1742,10 +1742,19 @@ Para descobrir o gene do anamorfismo, recorremos ao diagrama do anamorfismo das 
 }}
 
 \vspace{0.5cm}
-Assim sendo percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias, ou no caso da lista singular devolve-a.
+Primeiramente percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias,
+ou no caso da lista singular devolve a mesma.
 Uma vez que estamos a trabalhar com listas não vazias resolvemos aplicar o \ensuremath{\Varid{outNElist}} que definimos anteriormente.
 Como este produz em vez de duas listas um elemento e uma lista, decidimos tornar o ùnico numa lista singular.
 Assim o resultado de \ensuremath{\Varid{list2LTree}} será uma árvore com o primeiro de cada sublista à esquerda
+auxiliar
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{splitHalf}\;(\Varid{a},\Varid{b})\mathrel{=}\Varid{splitAt}\;((\length \;\Varid{b}\mathbin{+}\mathrm{1})\mathbin{\Varid{`div`}}\mathrm{2})\;(\Varid{a}\mathbin{:}\Varid{b}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
 
 \begin{center}
 \fbox{\begin{minipage}{23em}
@@ -1754,7 +1763,7 @@ Assim o resultado de \ensuremath{\Varid{list2LTree}} será uma árvore com o pri
 \column{17}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{g\char95 list2LTree}\mathrel{=}{}\<[17]%
-\>[17]{}(\Varid{id}+\Varid{singl}\times\Varid{id})\comp \Varid{outNEList}{}\<[E]%
+\>[17]{}(\Varid{id}+\Varid{splitHalf})\comp \Varid{outNEList}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{minipage}}
@@ -1855,7 +1864,7 @@ conforme a diferença entre os valores de hash que a mudança na transação cau
 \vspace{0.5cm}
 \par Valorização:
 \vspace{0.5cm}
-\par Para descobrir o gene do anamorfismo \ensuremath{\Varid{pairList}} recorremos ao seu diagrama.
+\par Para descobrir o gene do anamorfismo \ensuremath{\Varid{pairsList}} recorremos ao seu diagrama.
 \vspace{0.5cm}
 
 \xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
@@ -1890,8 +1899,10 @@ sendo que usamos a \ensuremath{\Varid{assocl}} estudada nas aulas.
 \fbox{\begin{minipage}{38em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{23}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{g\char95 pairsList}\mathrel{=}(\Varid{id}+\Varid{assocl})\comp (\Varid{id}+\Varid{id}\times\conj{\Varid{head}}{\Varid{tail}})\comp \Varid{outList}\comp \Varid{getEvenBlock}{}\<[E]%
+\>[B]{}\Varid{g\char95 pairsList}\mathrel{=}(\Varid{id}+{}\<[23]%
+\>[23]{}\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{tail}}))\comp \Varid{outList}\comp \Varid{getEvenBlock}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{minipage}}
@@ -1901,49 +1912,66 @@ Mais uma vez recorremos a um diagrama para compreender os genes pedidos
 e os seus tipos. Para chegar à sua versão final tivemos de compreender
 o \ensuremath{\Varid{conquer}}, o que é um either, em que o lado esuqerdo é o \ensuremath{\Varid{head}} de uma lista,
 que tendo em conta  o que este produz, será uma lista com uma \ensuremath{\Conid{MerkleTree}} singular,
-isto é a \ensuremath{\Conid{Merkle}\;\Conid{Root}}. Conhecendo o tipo da \ensuremath{\Varid{joinMerkleTree}} foi possivel aber o tipo do
+isto é a \ensuremath{\Conid{Merkle}\;\Conid{Root}}. Conhecendo o tipo da \ensuremath{\Varid{joinMerkleTree}} foi possivel saber o tipo do
 lado direito do either, e assim obter o resto do diagrama.
 \vspace{0.5cm}
 
-\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\xymatrixcolsep{8pc}\xymatrixrowsep{6pc}
 \centerline{\xymatrix{
-    \mathbb{Z}^+ \ar[d]_-{\ensuremath{\cataList{\Varid{conquer}}\comp \anaList{\Varid{divide}}}}
-                \ar [rr]^-{\ensuremath{\Varid{divide}}} & \quad \qquad
-&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree\ \mathbb{Z}\ \mathbb{Z})^+ \times\ \mathbb{Z}^+
-          \ar[d]^{\ensuremath{\Varid{recNEList}\;(\cataList{\Varid{conquer}}\comp \anaList{\Varid{divide}})}}
+\mathbb{Z}^+\
+		\ar[r]^-{\ensuremath{\Varid{divide}}}
+		\ar[d]_-{\ensuremath{\anaList{\Varid{divide}}}}
+&
+FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+ \times\ \mathbb{Z}^+\
+		\ar[d]^{\ensuremath{\Varid{id}\times\Varid{id}\mathbin{+}\anaList{\Varid{divide}}}}
 \\
-    FTree\ \mathbb{Z}\ \mathbb{Z} &
-&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree \mathbb{Z}\ \mathbb{Z})^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z})
-          \ar[ll]^-{\ensuremath{\Varid{conquer}}}
+	(FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
+		\ar[d]_-{\ensuremath{\cataNat{\Varid{conquer}}}}
+		\ar@/^2pc/[r]^-{\ensuremath{\Varid{outNEList}}}
+&
+FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
+		\ar[d]^{\ensuremath{\Varid{id}\times\Varid{id}\mathbin{+}\cataNat{\Varid{conquer}}}}
+		\ar@/^2pc/[l]^-{\ensuremath{\Varid{inNEList}}}
+\\
+	FTree\ \mathbb{Z}\ \mathbb{Z}
+&
+    FTree\ \mathbb{Z}\ \mathbb{Z}^+ +\ FTree \mathbb{Z}\ \mathbb{Z}^+\ \times FTree\ \mathbb{Z}\ \mathbb{Z}
+    \ar[l]^-{\ensuremath{\Varid{conquer}}}
 }}
 
 \vspace{0.5cm}
-Distinto da primeira parte deste problema, em \ensuremath{{\FTree}\;\Varid{a}\;\Varid{c}} c corresponde ao valor de ache de uma folha, da \ensuremath{\Conid{Unit}}, e o a
+Distinto da primeira parte deste problema, em \ensuremath{{\FTree}\;\Varid{a}\;\Varid{c}}, c corresponde ao valor de hash de uma folha, da \ensuremath{\Conid{Unit}}, e o a
 corresponde à concatenação dos filhos.
 \par Para resolver estes genes tivemos de perceber em que fase do algoritmo estes se encontram.
 Sendo que já temos a uma lista de pares a ser produzida, com a \ensuremath{\Varid{pairsList}}, resta-nos os passos 4 e 5 do algoritmo.
 Pelo diagrama anterior, concluimos que o divide será o passo 4, uma vez que este apresenta uma lista de sub-árvores como mencionado.
-\par Para o divide primeiro apliocamos o \ensuremath{\Varid{outNEList}}, para ficar com um tipo identico ao pretendido, precisando agora apenas de
+\par Para o divide primeiro aplicamos o \ensuremath{\Varid{outNEList}}, para ficar com um tipo idêntico ao pretendido, precisando agora apenas de
 transpormar o elemento singular em \ensuremath{{\FTree}} e
 
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{55}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{classicMerkleTree}\mathbin{::}\Conid{Hashable}\;\Varid{a}\Rightarrow [\mskip1.5mu \Varid{a}\mskip1.5mu]\to {\FTree}\;\mathbb{Z}\;\mathbb{Z}{}\<[E]%
 \\
 \>[B]{}\Varid{classicMerkleTree}\mathrel{=}(\Varid{hyloNEList}\;\Varid{conquer}\;\Varid{divide})\comp (\map \;\Varid{\Conid{Main}.hash}){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{divide}\mathrel{=}((\Varid{singl}\comp \Conid{Unit})+(\Conid{Comp}))\comp \Varid{outNEList}{}\<[E]%
+\>[B]{}\Varid{singleFTree}\;(\Varid{a},\Varid{b})\mathrel{=}\Conid{Comp}\;(\Varid{concHash}\;(\Varid{a},\Varid{b}))\;(\Conid{Unit}\;\Varid{a},\Conid{Unit}\;\Varid{b}){}\<[E]%
+\\
+\>[B]{}\Varid{divide}\mathrel{=}\bot \;{}\<[21]%
+\>[21]{}(\Varid{singleFTree}+)\comp \Varid{outNEList}\comp {}\<[55]%
+\>[55]{}\Varid{pairsList}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{conquer}\mathrel{=}\alt{\Varid{head}}{\Varid{joinMerkleTree}}\;\mathbf{where}{}\<[E]%
+\>[B]{}\Varid{conquer}\mathrel{=}\bot \;\alt{\cdot }{\cdot }\;\Varid{head}\;\Varid{joinMerkleTree}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
 \>[7]{}\Varid{joinMerkleTree}\;(\Varid{l},\Varid{m})\mathrel{=}\Varid{mergeMerkleTree}\;\Varid{m}\;(\Varid{evenMerkleTreeList}\;\Varid{l}){}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
-\>[7]{}\Varid{mergeMerkleTree}\mathrel{=}\llparenthesis\, \alt{h_1 }{h_2 }\,\rrparenthesis{}\<[E]%
+\>[7]{}\Varid{mergeMerkleTree}\mathrel{=}\bot \;\llparenthesis\, \cdot \,\rrparenthesis\;\alt{h_1 }{h_2 }{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
 \>[7]{}h_1 \;\Varid{c}\;\Varid{l}\mathrel{=}\Varid{c}{}\<[E]%
@@ -1958,9 +1986,63 @@ transpormar o elemento singular em \ensuremath{{\FTree}} e
 
 \subsection*{Problema 2}
 
+\par Para resolver este problema, resolvemos começar desenvolver o sistema resultante da aplicação
+da lei de recursividade mútua, em que o \ensuremath{\Varid{f}} é o \ensuremath{\Varid{wc\char95 w}} e o g o \ensuremath{\Varid{lookahead\char95 sep}}
+
+\begin{eqnarray*}
+\start
+  \ensuremath{\begin{lcbr}\Varid{wc\char95 w}\comp \mathsf{in}\mathrel{=}\Varid{h}\comp \fun F \;\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}}\\\Varid{lookahead\char95 sep}\comp \mathsf{in}\mathrel{=}\Varid{k}\comp \fun F \;\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}}\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{h=[h1,h2],\ k=[k1,k2],\ F-Lists,\ Absorsão-+\ (22),\ Natural-id\ (1)}}
+%
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\comp \mathsf{in}\mathrel{=}[\mskip1.5mu h_1 ,h_2 \comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\mskip1.5mu]\\\Varid{lookahead\char95 sep}\comp \mathsf{in}\mathrel{=}[\mskip1.5mu k_1 ,k_2 \comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\mskip1.5mu]\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{inList,\ Fusão-+\ (20),\ Eq-+\ (27)}}
+%
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\comp \Varid{nil}\mathrel{=}h_1 \\\Varid{wc\char95 w}\comp \Varid{cons}\mathrel{=}h_2 \comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\end{lcbr}}\\ & &
+\ensuremath{\begin{lcbr}\Varid{lookahead\char95 sep}\comp \Varid{nil}\mathrel{=}k_1 \\\Varid{lookahead\char95 sep}\comp \Varid{cons}\mathrel{=}k_2 \comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{Pelas\ definições\ fornecidas\ podemos\ definirmo\ h\ e\ k}}
+%
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\underline{\mathrm{0}}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}(((\neg \comp \Varid{sp}\comp \p1)\mathrel{\wedge}(\p2\comp \p2))\to (\succ \comp \p1\comp \p2),(\p1\comp \p2))\comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\;(\Varid{c},\Varid{l})\end{lcbr}}\\ & &
+\ensuremath{\begin{lcbr}\Varid{lookahead\char95 sep}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\Conid{True}\\\Varid{lookahead\char95 sep}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}(\Varid{sp}\comp \p1)\comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\;(\Varid{c},\Varid{l})\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{Natural-p1\ (12)}}
+%
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\underline{\mathrm{0}}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}\mathbf{if}\;\neg \comp (\Varid{sep}\;\Varid{c})\mathrel{\wedge}\Varid{lookahead\char95 sep}\;\Varid{l}\;\mathbf{then}\;\Varid{wc\char95 w}\;\Varid{l}\mathbin{+}\mathrm{1}\;\mathbf{else}\;\Varid{wc\char95 w}\;\Varid{l}\end{lcbr}}\\ & &
+\ensuremath{\begin{lcbr}\Varid{lookahead\char95 sep}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\Conid{True}\\\Varid{lookahead\char95 sep}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}\Varid{sp}\;\Varid{c}\end{lcbr}}
+\end{eqnarray*}
+
+\vspace{0.5cm}
+Para definir o \ensuremath{h_2 }, uma vez que se trata de uma condicional, recorremos à
+função pré-definiada \ensuremath{\Conid{Cond}}.
+\par Na fórmula condicional \ensuremath{\Varid{p}\to \Varid{f},\Varid{g}} o nosso \ensuremath{\Varid{p}} será a condição \ensuremath{\Varid{sp}\;\Varid{c}\mathrel{\wedge}\Varid{lookahead\char95 sep}\;\Varid{l}}, o \ensuremath{\Varid{f}} é o caso da condição ser verdadeira,
+\ensuremath{\Varid{wc\char95 w}\;\Varid{l}\mathbin{+}\mathrm{1}}, e o g, a a condição ser falsa \ensuremath{\Varid{wc\char95 w}\;\Varid{l}}. Como o \ensuremath{\Varid{p}} são duas condições utilizamos um split para obter um par \ensuremath{\Varid{sp}\;\Varid{c}} e \ensuremath{\Varid{lookahead\char95 sep}\;\Varid{l}}.
+De seguida definimos uma auxiliar que recebe o resultado do split e retorna o valor da condição.
+\par Para o definir o \ensuremath{\Varid{wc\char95 w\char95 final}}, tivemos de perceber a transformação \ensuremath{\Conid{Wrapper}\mathbin{/}\Conid{Worker}},
+que, tal como sugere o nome, o \ensuremath{\Conid{Worker}} produz o resultado e o \ensuremath{\Conid{Wrapper}}, desse resultado, devolve o pretendido.
+\par Percebendo isto, recorremos ao diagrama do caratmotfismo de listas do Worker.
+\vspace{0.5cm}
+
+\xymatrixcolsep{3pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   Char^* \ar[d]_-{\ensuremath{\Varid{worker}}}
+                \ar[rr]^-{\ensuremath{\Varid{outList}}} & \qquad
+&  1\ +\ Char\ \times Char^*
+  \ar[d]^{\ensuremath{\Varid{recList}\;\Varid{worker}}}
+\\
+    Int \times Bool &
+&  1\ +\ Char\ \times (Int \times Bool)
+    \ar[ll]^-{\ensuremath{[\mskip1.5mu \conj{\underline{\mathrm{0}}}{\Conid{True}},\conj{h_2 }{\Varid{sp}\comp \p1}\mskip1.5mu]}}
+}}
+
+\vspace{0.5cm}
+Analisando o diagrama, e tendo em consideração os genes \ensuremath{\Varid{h}} e \ensuremath{\Varid{k}} já definidos, percebemos que o \ensuremath{\Conid{Worker}},
+é o \ensuremath{\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}}}, ou seja pela aplicação da lei de recursividade mútua,
+\ensuremath{\cataList{\conj{\Varid{h}}{\Varid{k}}}}, sendo o \ensuremath{\Varid{wc\char95 w\char95 final}} o primeiro valor do split produzirdo pelo \ensuremath{\Varid{worker}}.
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{wc\char95 w\char95 final}\mathbin{::}[\mskip1.5mu \Conid{Char}\mskip1.5mu]\to \Conid{Int}{}\<[E]%
 \\
@@ -1968,28 +2050,31 @@ transpormar o elemento singular em \ensuremath{{\FTree}} e
 \\
 \>[B]{}\Varid{worker}\mathrel{=}\cataList{\alt{\Varid{g1}}{\Varid{g2}}}{}\<[E]%
 \\
-\>[B]{}\Varid{wrapper}\mathrel{=}{}\<[12]%
-\>[12]{}\bot {}\<[E]%
+\>[B]{}\Varid{wrapper}\mathrel{=}\p1{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 Gene de \ensuremath{\Varid{worker}}:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{g1}\mathrel{=}\Varid{nil}{}\<[E]%
+\>[B]{}\Varid{g1}\mathrel{=}\conj{h_1 }{k_1 }{}\<[E]%
 \\
-\>[B]{}\Varid{g2}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{g2}\mathrel{=}\conj{h_2 }{k_2 }{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 Genes \ensuremath{\Varid{h}\mathrel{=}\alt{h_1 }{h_2 }} e \ensuremath{\Varid{k}\mathrel{=}\alt{k_1 }{k_2 }} identificados no cálculo:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}h_1 \mathrel{=}\underline{\mathrm{0}}{}\<[E]%
 \\
-\>[B]{}h_2 \;(\Varid{c},\Varid{l})\mathrel{=}\mathbf{if}\;(\Varid{sp}\;\Varid{c})\mathrel{\wedge}(\p2\;\Varid{l})\;\mathbf{then}\;(\p1\;\Varid{l}\mathbin{+}\mathrm{1})\;\mathbf{else}\;(\p1\;\Varid{l}){}\<[E]%
+\>[B]{}h_2 \mathrel{=}\Varid{cond}\;(\Varid{testaCond}\comp \conj{\neg \comp \Varid{sp}\comp \p1}{\p2\comp \p2})\;(\succ \comp \p1\comp \p2)\;(\p1\comp \p2)\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{testaCond}\;(\Varid{c1},\Varid{c2})\mathrel{=}\Varid{c1}\mathrel{\wedge}\Varid{c2}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}k_1 \mathrel{=}\Conid{True}{}\<[E]%
+\>[B]{}k_1 \mathrel{=}\underline{\Conid{True}}{}\<[E]%
 \\
 \>[B]{}k_2 \mathrel{=}\Varid{sp}\comp \p1{}\<[E]%
 \ColumnHook
@@ -1997,17 +2082,25 @@ Genes \ensuremath{\Varid{h}\mathrel{=}\alt{h_1 }{h_2 }} e \ensuremath{\Varid{k}\
 
 \subsection*{Problema 3}
 
+A primeira fase deste problema é definir os contrutores da biblioteca de uma \ensuremath{\Conid{XLeaf}}.
+Primeiro tivemos de compreender o tipo \ensuremath{\Conid{X}}, para fazer o either \ensuremath{\Varid{inX}}.
+\par Se o elemento da direita for um \ensuremath{\Varid{u}}, o X vai ser uma folha, ou seja \ensuremath{\Conid{XLeaf}\;\Varid{u}}.
+No caso de ser do tipo \ensuremath{(\Varid{i},(\Conid{X}\;\Varid{u}\;\Varid{i},\Conid{X}\;\Varid{u}\;\Varid{i})} presisamos de fazer uncurry duas vezes após usar a auxiliar \ensuremath{\Varid{assocl}}:
+\vspace{0.5cm}
+
+\xymatrixcolsep{2pc}\xymatrixrowsep{3pc}
+\centerline{\xymatrix{
+   (i, (X u i, X u i) \ar[rr]^-{\ensuremath{\Varid{assocl}}} && ((i,X u i),X u i) \ar[rr]^-{\ensuremath{\uncurry{\Conid{Node}}}} && X u (i, X u i) \ar[rr]^-{\ensuremath{\uncurry{\Conid{Node}}}} && X u i
+}}
+
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{25}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{inX}\mathbin{::}\Varid{u}+(\Varid{i},(\Conid{X}\;\Varid{u}\;\Varid{i},\Conid{X}\;\Varid{u}\;\Varid{i}))\to \Conid{X}\;\Varid{u}\;\Varid{i}{}\<[E]%
 \\
-\>[B]{}\Varid{inX}\mathrel{=}\alt{\Conid{XLeaf}}{\Varid{n}}\;\mathbf{where}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{n}\;(\Varid{i},(\Varid{l},\Varid{r}))\mathrel{=}\Conid{Node}\;\Varid{i}\;\Varid{l}\;\Varid{r}{}\<[E]%
+\>[B]{}\Varid{inX}\mathrel{=}\alt{\Conid{XLeaf}}{\uncurry{\uncurry{\Conid{Node}}}\comp \Varid{assocl}}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{outX}\;(\Conid{XLeaf}\;\Varid{u})\mathrel{=}i_1\;\Varid{u}{}\<[E]%
 \\
@@ -2019,18 +2112,43 @@ Genes \ensuremath{\Varid{h}\mathrel{=}\alt{h_1 }{h_2 }} e \ensuremath{\Varid{k}\
 \>[B]{}\Varid{recX}\;\Varid{f}\mathrel{=}\Varid{baseX}\;\Varid{id}\;\Varid{id}\;\Varid{f}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{cataX}\;\Varid{g}\mathrel{=}\Varid{g}\comp (\Varid{recX}\;(\Varid{cataX}\;\Varid{g}))\comp \Varid{outX}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{anaX}\;\Varid{f}\mathrel{=}\Varid{inX}\comp (\Varid{recX}\;(\Varid{anaX}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{hyloLTree}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataX}\;\Varid{f}\comp \Varid{anaX}\;\Varid{g}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-Inserir a partir daqui o resto da resolução deste problema:
-
-....
+A evolução da biblioteca anterior para uma outra que permita partições n-arias (para qualquer n
+finito) e nao apenas binárias
 \begin{hscode}\SaveRestoreHook
 \ColumnHook
 \end{hscode}\resethooks
 
 \subsection*{Problema 4}
-Sendo o \textbf{Pairl} um anamorfismo de listas podemos
+\vspace{0.3cm}
+\subsubsection*{PairL}
+\par Sendo o \ensuremath{\Varid{pairL}} um anamorfismo de listas podemos podemos representalo como o seguinte diagrama abaixo.
+Deste retiramos que o gene de \ensuremath{\Varid{pairL}} produz, no caso de não vazia, um par à cabeça da mesma, com os dois primeiros elementos,
+isto é, a cabeça e o primeiro elemento da cauda, e a cauda (\ensuremath{\Varid{tail}}).
+\par Para obter esta solução, utilizamos o \ensuremath{\Varid{outList}} para produzir um either. Sendo que o lado esquerdo já está como queremos,
+bastou, no lado direito, utilizar um split para por no tipo \ensuremath{\Conid{A}\times(\Conid{A}\times\Conid{A}\mathbin{*})}, em que o o segundo A é a \ensuremath{\Varid{head}} da \ensuremath{\Varid{tail}} da lista original,
+e a lista é essa mesma \ensuremath{\Varid{tail}}. Após ter este tipo utilizamos a \ensuremath{\Varid{assocl}} para produzir o resultado pretendido.
+
+\vspace{0.5cm}
+
+\xymatrixcolsep{6pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   A^*\ \ar[d]_-{\ensuremath{\Varid{pairL}}}
+   \ar[rr]^-{\ensuremath{(\Varid{id}\mathbin{+}\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{id}}))\comp \Varid{outNEList}}} & \qquad
+&    1 + ((A,A)^* \times A^*)  \ar[d]^{\ensuremath{\Varid{recList}\;\Varid{pairL}}}
+\\
+    (A,A)^* &
+     &  1 + ((A,A) \times (A,A)^*) \ar[ll]^-{\ensuremath{\Varid{inList}}}
+}}
+
+\vspace{0.5cm}
+
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2040,31 +2158,35 @@ Sendo o \textbf{Pairl} um anamorfismo de listas podemos
 \>[B]{}\Varid{pairL}\mathrel{=}\anaList{\Varid{g}}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{g}\mathrel{=}(\Varid{id}+\Varid{assocl})\comp (\Varid{id}+\Varid{id}\times\conj{\Varid{head}}{\Varid{id}})\comp \Varid{outNEList}{}\<[E]%
+\>[3]{}\Varid{g}\mathrel{=}(\Varid{id}+\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{id}}))\comp \Varid{outNEList}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-Para conseguir chegar ao resutado de f2 precisamos primeiro de entender O que um mapa representa e como modifica-lo.
-A primiera conclusão a que chegamos, pelo exemplo apresentado no problema 4 do Capitulo 1 da \ensuremath{\Varid{markMap}} é que a posição (0,0) a posição (0,1) a acima, ea posição (1,0) a da direita é a ultima linha da esquerda do mapa.
-Ou seja uma posição é do tipo (linha,coluna),
-De seguida, pela analise dos mapas fornecidos, percebemos que na matriz o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
-Chegando a estas conclusões podemos afirmar que, após obter o resultado ao executar a toCell entre duas posições é:
+
+\subsubsection*{markMap}
+\par Para conseguir chegar ao resutado de f2 precisamos primeiro de entender o que um mapa representa e como modifica-lo.
+A primiera conclusão a que chegamos, analisando o exemplo apresentado no problema 4 do Capitulo 1, foi que a posição (0,0) é a última à esquerda, posição (0,1) a acima dessa, e a posição (1,0) a da direita do mapa.
+Ou seja uma posição é do tipo (linha,coluna).
+\par De seguida, pela análise dos mapas fornecidos, percebemos que, na matriz, o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
+Chegando a estas conclusões podemos afirmar que, ao executar a \ensuremath{\Varid{toCell}} entre duas posições o resultado significa que:
 \begin{itemize}
-\item \textbf{Lft} iremos passar a atualizar a posição seguinte no mesmo elemnto da matriz
-\item \textbf{Rght} iremos passar a atualizar a posição anterior no mesmo elemnto da matriz
-\item \textbf{UP} iremos passar a mesma a posição no elemento seguinte da matriz
-\item \textbf{Down} iremos passar a mesma a posição no elemento anterior da matriz
+\item \textbf{Lft} - iremos passar a atualizar a posição seguinte no mesmo elemnto da matriz
+\item \textbf{Rght} - iremos passar a atualizar a posição anterior no mesmo elemnto da matriz
+\item \textbf{UP} - iremos passar a mesma a posição no elemento seguinte da matriz
+\item \textbf{Down} - iremos passar a mesma a posição no elemento anterior da matriz
 \end{itemize}
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{markMap}\mathbin{::}[\mskip1.5mu \Conid{Pos}\mskip1.5mu]\to \Conid{Map}\to \Conid{Map}{}\<[E]%
 \\
 \>[B]{}\Varid{markMap}\;\Varid{l}\mathrel{=}\cataList{\alt{\underline{\Varid{id}}}{f_2 }}\;(\Varid{pairL}\;\Varid{l})\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}f_2 \mathrel{=}\bot {}\<[E]%
+\>[3]{}f_2 \mathrel{=}{}\<[9]%
+\>[9]{}\bot {}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2084,7 +2206,8 @@ Chegando a estas conclusões podemos afirmar que, após obter o resultado ao exe
 \ColumnHook
 \end{hscode}\resethooks
 
-\paragraph{Valorização} (opcional) Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
+\paragraph{Valorização}
+\par Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
 
 \begin{propriedade}
 A lista correspondente ao lado esquerdo

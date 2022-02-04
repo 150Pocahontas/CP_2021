@@ -1218,15 +1218,21 @@ Para descobrir o gene do anamorfismo, recorremos ao diagrama do anamorfismo das 
 }}
 
 \vspace{0.5cm}
-Assim sendo percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias, ou no caso da lista singular devolve-a.
+Primeiramente percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias,
+ou no caso da lista singular devolve a mesma.
 Uma vez que estamos a trabalhar com listas não vazias resolvemos aplicar o |outNElist| que definimos anteriormente.
 Como este produz em vez de duas listas um elemento e uma lista, decidimos tornar o ùnico numa lista singular.
 Assim o resultado de |list2LTree| será uma árvore com o primeiro de cada sublista à esquerda
+auxiliar
+
+\begin{code}
+splitHalf (a,b) = splitAt ((length b + 1) `div` 2) (a:b)
+\end{code}
 
 \begin{center}
 \fbox{\begin{minipage}{23em}
 \begin{code}
-g_list2LTree =  (id -|- singl>< id) . outNEList
+g_list2LTree =  (id -|- splitHalf) . outNEList
 \end{code}
 \end{minipage}}
 \end{center}
@@ -1257,7 +1263,7 @@ e o |c| o par (hash,transação).
 
 \begin{code}
 getHash (Unit c) = p1 c
-getHash (Comp a t) = a
+getHash (Comp a _) = a
 calcHash (t1,t2) = concHash(getHash t1 , getHash t2)
 \end{code}
 
@@ -1312,7 +1318,7 @@ conforme a diferença entre os valores de hash que a mudança na transação cau
 \vspace{0.5cm}
 \par Valorização:
 \vspace{0.5cm}
-\par Para descobrir o gene do anamorfismo |pairList| recorremos ao seu diagrama.
+\par Para descobrir o gene do anamorfismo |pairsList| recorremos ao seu diagrama.
 \vspace{0.5cm}
 
 \xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
@@ -1342,85 +1348,197 @@ pairsList = anaList (g_pairsList)
 \begin{center}
 \fbox{\begin{minipage}{38em}
 \begin{code}
-
-g_pairsList = (id -|- assocl) . (id -|- id >< split head tail) . outList . getEvenBlock
+g_pairsList = (id -|-  assocl . (id >< split head tail)) . outList . getEvenBlock
 \end{code}
 \end{minipage}}
 \end{center}
 
 Mais uma vez recorremos a um diagrama para compreender os genes pedidos
 e os seus tipos. Para chegar à sua versão final tivemos de compreender
-o |conquer|, o que é um either, em que o lado esuqerdo é o |head| de uma lista,
-que tendo em conta  o que este produz, será uma lista com uma |MerkleTree| singular,
-isto é a |Merkle Root|. Conhecendo o tipo da |joinMerkleTree| foi possivel aber o tipo do
-lado direito do either, e assim obter o resto do diagrama.
+o |conquer|, que é um either, em que o lado esquerdo é a |head| de uma lista,
+que tendo em conta o problema, será uma lista com uma |MerkleTree| singular,
+isto é a |Merkle Root|. Conhecendo o tipo da |joinMerkleTree| foi possivel
+chegar ao tipo do lado direito do either, e assim obter o resto do diagrama.
 \vspace{0.5cm}
 
-\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\xymatrixcolsep{8pc}\xymatrixrowsep{6pc}
 \centerline{\xymatrix{
-    \mathbb{Z}^+ \ar[d]_-{|(cataList conquer) . (anaList divide)|}
-                \ar [rr]^-{|divide|} & \quad \qquad
-&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree\ \mathbb{Z}\ \mathbb{Z})^+ \times\ \mathbb{Z}^+
-          \ar[d]^{|recNEList(cataList conquer . anaList divide)|}
+\mathbb{Z}^+\
+		\ar[r]^-{|divide|}
+		\ar[d]_-{|(anaList divide)|}
+&
+FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+ \times\ \mathbb{Z}^+\
+		\ar[d]^{|id >< id + (anaList divide) |}
 \\
-    FTree\ \mathbb{Z}\ \mathbb{Z} &
-&   (FTree \mathbb{Z}\ \mathbb{Z})^+ + (FTree \mathbb{Z}\ \mathbb{Z})^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z})
-          \ar[ll]^-{|conquer|}
+	(FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
+		\ar[d]_-{|cataNat conquer|}
+		\ar@@/^2pc/[r]^-{|outNEList|}
+&
+FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
+		\ar[d]^{|id >< id + (cataNat conquer)|}
+		\ar@@/^2pc/[l]^-{|inNEList|}
+\\
+	FTree\ \mathbb{Z}\ \mathbb{Z}
+&
+    FTree\ \mathbb{Z}\ \mathbb{Z}^+ +\ FTree \mathbb{Z}\ \mathbb{Z}^+\ \times FTree\ \mathbb{Z}\ \mathbb{Z}
+    \ar[l]^-{|conquer|}
 }}
 
 \vspace{0.5cm}
-Distinto da primeira parte deste problema, em |FTree a c| c corresponde ao valor de ache de uma folha, da |Unit|, e o a
+Distinto da primeira parte deste problema, em |FTree a c|, c corresponde ao valor de hash de uma folha, da |Unit|, e o a
 corresponde à concatenação dos filhos.
 \par Para resolver estes genes tivemos de perceber em que fase do algoritmo estes se encontram.
 Sendo que já temos a uma lista de pares a ser produzida, com a |pairsList|, resta-nos os passos 4 e 5 do algoritmo.
 Pelo diagrama anterior, concluimos que o divide será o passo 4, uma vez que este apresenta uma lista de sub-árvores como mencionado.
-\par Para o divide primeiro apliocamos o |outNEList|, para ficar com um tipo identico ao pretendido, precisando agora apenas de
-transpormar o elemento singular em |FTree| e
+\par Para o divide primeiro aplicamos o |outNEList|, para ficar com um tipo idêntico ao pretendido, precisando agora apenas de
+transformar o elemento singular numa lista de |FTree|, bem como o primeiro elemento da lista.
+\par
 
 
 \begin{code}
 classicMerkleTree :: Hashable a => [a] -> FTree Integer Integer
 classicMerkleTree = (hyloNEList conquer divide) . (map Main.hash)
-
-divide = ((singl . Unit) -|- (Comp) ) . outNEList
-
-conquer = either head joinMerkleTree where
+\end{code}
+\begin{code}
+concPair (a,b) = Comp (concHash(a,b)) (Unit a, Unit b)
+divide = ((singl . Unit) -|- (singl . concPair >< id) . assocl .(id >< (split head tail))) . outNEList
+\end{code}
+\begin{code}
+conquer =  either head joinMerkleTree where
       joinMerkleTree (l, m) = mergeMerkleTree m (evenMerkleTreeList l)
       mergeMerkleTree = cataFTree (either h1 h2)
-      h1 c l = c
-      h2 (c, (f, g)) l = (c ,((head l) , last l))
+      h1 c l = undefined
+      h2 (c, (f, g)) l = undefined
       evenMerkleTreeList = getEvenBlock
-
 \end{code}
 
 \subsection*{Problema 2}
+
+\par Para resolver este problema, resolvemos começar desenvolver o sistema resultante da aplicação
+da lei de recursividade mútua, em que o |f| é o |wc_w| e o g o |lookahead_sep|
+
+\begin{eqnarray*}
+\start
+  |lcbr(
+     wc_w . inT = h . fF(split wc_w lookahead_sep)
+     )(
+        lookahead_sep . inT = k . fF(split wc_w lookahead_sep)
+)|
+%
+\just\equiv{\textcolor{blue}{h=[h1,h2],\ k=[k1,k2],\ F-Lists,\ Absorsão-+\ (22),\ Natural-id\ (1)}}
+%
+|lcbr(
+    wc_w . inT = [h1,h2 . (id >< (split wc_w lookahead_sep))]
+    )(
+       lookahead_sep . inT = [k1, k2 .(id >< (split wc_w lookahead_sep))]
+)|
+%
+\just\equiv{\textcolor{blue}{inList,\ Fusão-+\ (20),\ Eq-+\ (27)}}
+%
+|lcbr(
+      wc_w . nil = h1
+      )(
+      wc_w . cons = h2 . (id >< (split wc_w lookahead_sep))
+)|\\ & &
+|lcbr(
+      lookahead_sep . nil = k1
+      )(
+      lookahead_sep . cons = k2 .(id >< (split wc_w lookahead_sep))
+)|
+%
+\just\equiv{\textcolor{blue}{Pelas\ definições\ fornecidas\ podemos\ definirmo\ h\ e\ k}}
+%
+|lcbr(
+      wc_w [] = const 0
+      )(
+      wc_w (c:l) = (((not . sp . p1) && (p2 . p2)) -> (succ .p1 . p2) , (p1 . p2) ) . (id >< (split wc_w lookahead_sep)) (c,l)
+)|\\ & &
+|lcbr(
+      lookahead_sep [] = True
+      )(
+      lookahead_sep (c:l) = (sp . p1) .(id >< (split wc_w lookahead_sep)) (c,l)
+)|
+%
+\just\equiv{\textcolor{blue}{Natural-p1\ (12)}}
+%
+|lcbr(
+      wc_w [] = const 0
+      )(
+      wc_w (c:l) = if not . (sep c) && lookahead_sep l then wc_w l + 1 else wc_w l
+)|\\ & &
+|lcbr(
+      lookahead_sep [] = True
+      )(
+      lookahead_sep (c:l) = sp c
+)|
+\end{eqnarray*}
+
+\vspace{0.5cm}
+Para definir o |h2|, uma vez que se trata de uma condicional, recorremos à
+função pré-definiada |Cond|.
+\par Na fórmula condicional |p -> f,g| o nosso |p| será a condição |sp c && lookahead_sep l|, o |f| é o caso da condição ser verdadeira,
+|wc_w l + 1|, e o g, a a condição ser falsa |wc_w l|. Como o |p| são duas condições utilizamos um split para obter um par |sp c| e |lookahead_sep l|.
+De seguida definimos uma auxiliar que recebe o resultado do split e retorna o valor da condição.
+\par Para o definir o |wc_w_final|, tivemos de perceber a transformação |Wrapper/Worker|,
+que, tal como sugere o nome, o |Worker| produz o resultado e o |Wrapper|, desse resultado, devolve o pretendido.
+\par Percebendo isto, recorremos ao diagrama do caratmotfismo de listas do Worker.
+\vspace{0.5cm}
+
+\xymatrixcolsep{3pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   Char^* \ar[d]_-{|worker|}
+                \ar[rr]^-{|outList|} & \qquad
+&  1\ +\ Char\ \times Char^*
+  \ar[d]^{|recList worker|}
+\\
+    Int \times Bool &
+&  1\ +\ Char\ \times (Int \times Bool)
+    \ar[ll]^-{|[split (const 0) True , split h2 (sp . p1) ]|}
+}}
+
+\vspace{0.5cm}
+Analisando o diagrama, e tendo em consideração os genes |h| e |k| já definidos, percebemos que o |Worker|,
+é o |split wc_w lookahead_sep|, ou seja pela aplicação da lei de recursividade mútua,
+|cataList(split h k)|, sendo o |wc_w_final| o primeiro valor do split produzirdo pelo |worker|.
 
 \begin{code}
 wc_w_final :: [Char] -> Int
 wc_w_final = wrapper . worker
 worker = cataList (either g1 g2)
-wrapper =  undefined
+wrapper = p1
 \end{code}
 Gene de |worker|:
 \begin{code}
-g1 = nil
-g2 = undefined
+g1 = split h1 k1
+g2 = split h2 k2
 \end{code}
 Genes |h = either h1 h2| e |k = either k1 k2| identificados no cálculo:
 \begin{code}
 h1 = const 0
-h2 (c,l) = if (sp c) && (p2 l) then (p1 l + 1 ) else (p1 l)
+h2 = cond (testaCond . (split (not . sp . p1) (p2 . p2))) (succ . p1 . p2) (p1 . p2) where
+  testaCond (c1,c2) = c1 && c2
 
-k1 = True
+k1 = const True
 k2 = sp . p1
 \end{code}
 
 \subsection*{Problema 3}
 
+A primeira fase deste problema é definir os contrutores da biblioteca de uma |XLeaf|.
+Primeiro tivemos de compreender o tipo |X|, para fazer o either |inX|.
+\par Se o elemento da direita for um |u|, o X vai ser uma folha, ou seja |XLeaf u|.
+No caso de ser do tipo |(i, (X u i, X u i)| presisamos de fazer uncurry duas vezes após usar a auxiliar |assocl|:
+\vspace{0.5cm}
+
+\xymatrixcolsep{2pc}\xymatrixrowsep{3pc}
+\centerline{\xymatrix{
+   (i, (X u i, X u i) \ar[rr]^-{|assocl|} && ((i,X u i),X u i) \ar[rr]^-{|uncurry Node|} && X u (i, X u i) \ar[rr]^-{|uncurry Node|} && X u i
+}}
+
+
 \begin{code}
 inX :: Either u (i, (X u i, X u i)) -> X u i
-inX = either XLeaf n where
-  n (i,(l,r)) = Node i l r
+inX = either XLeaf (uncurry (uncurry Node) . assocl)
 
 outX (XLeaf u) = Left u
 outX (Node i l r) = Right (i,(l,r))
@@ -1430,48 +1548,71 @@ baseX f h g = f -|- (h  >< (g >< g))
 recX f = baseX id id f
 
 cataX g = g . (recX (cataX g)) . outX
+
+anaX f = inX . (recX (anaX f) ) . f
+
+hyloLTree f g = cataX f . anaX g
 \end{code}
-
-Inserir a partir daqui o resto da resolução deste problema:
-
-....
+Something
 \begin{code}
+
 \end{code}
 
 \subsection*{Problema 4}
-Sendo o \textbf{Pairl} um anamorfismo de listas podemos
+\vspace{0.3cm}
+\subsubsection*{PairL}
+\par Sendo o |pairL| um anamorfismo de listas podemos podemos representalo como o seguinte diagrama abaixo.
+Deste retiramos que o gene de |pairL| produz, no caso de não vazia, um par à cabeça da mesma, com os dois primeiros elementos,
+isto é, a cabeça e o primeiro elemento da cauda, e a cauda (|tail|).
+\par Para obter esta solução, utilizamos o |outList| para produzir um either. Sendo que o lado esquerdo já está como queremos,
+bastou, no lado direito, utilizar um split para por no tipo |A >< (A >< A*)|, em que o o segundo A é a |head| da |tail| da lista original,
+e a lista é essa mesma |tail|. Após ter este tipo utilizamos a |assocl| para produzir o resultado pretendido.
+\par No entanto, sendo o número minimo de elementos, após o anamorfismo, fazemos init, de maneira a ignorar o último elemento obter uma lista fechada.
+\vspace{0.5cm}
+
+\xymatrixcolsep{6pc}\xymatrixrowsep{5pc}
+\centerline{\xymatrix{
+   A^*\ \ar[d]_-{|pairL|}
+   \ar[rr]^-{|(id + assocl . (id >< split head id)) . outList|} & \qquad
+&    1 + ((A,A) \times A^*)  \ar[d]^{|recList pairL|}
+\\
+    (A,A)^* &
+     &  1 + ((A,A) \times (A,A)^*) \ar[ll]^-{|inList|}
+}}
+
+\vspace{0.5cm}
+
 \begin{code}
 pairL :: [a] -> [(a,a)]
-pairL = anaList g where
-  g = (id -|- assocl) . (id -|- id >< split head id) . outNEList
+pairL = init . anaList g where
+  g =   (id -|-  assocl . (id >< split head id)) . outList
 \end{code}
-Para conseguir chegar ao resutado de f2 precisamos primeiro de entender O que um mapa representa e como modifica-lo.
-A primiera conclusão a que chegamos, pelo exemplo apresentado no problema 4 do Capitulo 1 da |markMap| é que a posição (0,0) a posição (0,1) a acima, ea posição (1,0) a da direita é a ultima linha da esquerda do mapa.
-Ou seja uma posição é do tipo (linha,coluna),
-De seguida, pela analise dos mapas fornecidos, percebemos que na matriz o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
-Chegando a estas conclusões podemos afirmar que, após obter o resultado ao executar a toCell entre duas posições é:
-\begin{itemize}
-\item \textbf{Lft} iremos passar a atualizar a posição seguinte no mesmo elemnto da matriz
-\item \textbf{Rght} iremos passar a atualizar a posição anterior no mesmo elemnto da matriz
-\item \textbf{UP} iremos passar a mesma a posição no elemento seguinte da matriz
-\item \textbf{Down} iremos passar a mesma a posição no elemento anterior da matriz
-\end{itemize}
+
+\subsubsection*{markMap}
+\par Para conseguir chegar ao resutado de f2 precisamos primeiro de entender o que um mapa representa e como modifica-lo.
+A primiera conclusão a que chegamos, analisando o exemplo apresentado no problema 4 do Capitulo 1, foi que a posição (0,0) é a última à esquerda, posição (0,1) a acima dessa, e a posição (1,0) a da direita do mapa.
+Ou seja uma posição é do tipo (coluna,linha).
+\par De seguida, pela análise dos mapas fornecidos, percebemos que, na matriz, o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
+toCell e Substituir
 
 \begin{code}
 markMap :: [Pos] -> Map -> Map
 markMap l = cataList (either (const id) f2) (pairL l) where
-  f2 = undefined
-
+  f2 = aux . (substMatriz . (split (uncurry toCell) p1) >< id)
+  substMatriz (c, (x,y)) m = subst (subst c x (m !! y)) y m
+  aux (f,g) = f . g
 \end{code}
 
 \begin{code}
 scout :: Map -> Pos -> Pos -> Int -> [[Pos]]
 scout m s t = cataNat (either f1 ((>>= f2 m s))) where
-  f1 = undefined
-  f2 = undefined
+  f1 = singl . singl . (const s)
+  f2 = aux . (checkAround >< id)
+  aux (f,g) = f . g
 \end{code}
 
-\paragraph{Valorização} (opcional) Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
+\paragraph{Valorização}
+\par Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
 
 \begin{propriedade}
 A lista correspondente ao lado esquerdo
@@ -1480,7 +1621,7 @@ Analogamente, a lista correspondente ao lado direito
 dos pares em (|pairL l|) é a lista original |l| a menos do primeiro elemento:
 
 \begin{code}
-prop_reconst l = (map p1 (pairL l)) == (init l) && (map p2 (pairL l)) == (tail l)
+prop_reconst l = (map p1 (pairL l) == (init l)) && ((map p2 (pairL l)) == (tail l))
 \end{code}
 \end{propriedade}
 
@@ -1489,39 +1630,37 @@ Assuma que uma linha (de um mapa) é prefixa de uma outra linha. Então a repres
 da primeira linha também prefixa a representação da segunda linha:
 \end{propriedade}
 \begin{code}
-prop_prefix2 l l' = (tail l') == (tail l)
+prop_prefix2 l l' = undefined
 \end{code}
 \begin{propriedade}
-Para qualquer linha (de um mapa), a sua representação  deve conter um número de símbolos correspondentes a um tipo célula igual
-ao número de vezes que esse tipo de célula aparece na linha em questão.
+Para qualquer linha (de um mapa), a sua representação deve conter um número de símbolos correspondentes a
+um tipo célula igual ao número de vezes que esse tipo de célula aparece na linha em questão.
 \end{propriedade}
 \begin{code}
-prop_nmbrs l c = undefined
+prop_nmbrs l c = undefined -- count (fromCell (head l)) c == count (head c) c
 
 count :: (Eq a) => a -> [a] -> Int
-count = curry unccount where
-  uncount (a,[]) = 0
-  unccount (a,l) = if (a == head l) then uncount (a,tail l) + 1 else uncount (a,tail l)
+count = undefined
 \end{code}
 
 \begin{propriedade}
 Para qualquer lista |l| a função |markMap l| é idempotente.
 \end{propriedade}
 \begin{code}
-inBounds m (x,y) = (nlines m) == x && (ncols m) == y
+inBounds m (x,y) = (nlines m) >= x && (ncols m) >= y
 
-prop_idemp2 l m = undefined
+prop_idemp2 l m = (m l) == l
 \end{code}
 \begin{propriedade}
 Todas as posições presentes na lista dada como argumento irão fazer com que
 as células correspondentes no mapa deixem de ser |Free|.
 \end{propriedade}
 \begin{code}
-prop_extr2 l m = undefined
+prop_extr2 l m = ((m !! (p1 (head l))) !! (p2 (head l)) /= Free) : prop_extr2 (tail l) m
 \end{code}
 
 \begin{propriedade}
-Quanto maior for o tamanho máximo dos caminhos  mais caminhos que alcançam a
+Quanto maior for o tamanho máximo dos caminhos mais caminhos que alcançam a
 posição alvo iremos encontrar:
 \end{propriedade}
 \begin{code}
