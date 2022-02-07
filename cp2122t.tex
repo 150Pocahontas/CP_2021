@@ -1647,7 +1647,7 @@ Lógicas:
 
 \subsection*{Problema 1} \label{pg:P1}
 
-Para grarantir que \ensuremath{\Varid{list2LTree}} não aceita listas vazias é pedido para definir \ensuremath{\Varid{outNEList}}.
+\par \hspace{0.5cm}Para grarantir que \ensuremath{\Varid{list2LTree}} não aceita listas vazias é pedido para definir \ensuremath{\Varid{outNEList}}.
 Uma vez que conhecemos o \ensuremath{\Varid{inNEList}} podemos calcular o seu inverso da seguinte forma:
 
 \begin{eqnarray*}
@@ -1679,7 +1679,7 @@ Assim o tipo do \ensuremath{\Varid{outNEList}} é:
 \centerline{\xymatrix{
    A^+\
                 \ar@/^2pc/ [rr]^-{\ensuremath{\Varid{outNEList}}} & \qquad \cong
-&    A + (A \times A^+)
+&    A + A \times A^+
       \ar@/^2pc/ [ll]^-{\ensuremath{\Varid{inNEList}}}
 \\
 }}
@@ -1727,43 +1727,40 @@ Listas não vazias:
 \vspace{0.5cm}
 Gene do anamorfismo:
 \vspace{0.5cm}\par
-Para descobrir o gene do anamorfismo, recorremos ao diagrama do anamorfismo das LTree.
+Para descobrir o gene do anamorfismo, recorremos ao diagrama do anamorfismo das \ensuremath{{\LTree}}.
 \vspace{0.5cm}
 
 \xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
    A^+\ \ar[d]_-{\ensuremath{\anaList{\Varid{g\char95 list2LTree}}}}
             \ar[rr]^-{\ensuremath{\Varid{g\char95 list2LTree}}} & \qquad
-&    A + (A^+ \times A^+)  \ar[d]^{\ensuremath{\Varid{recLTree}\;\anaList{\Varid{g\char95 list2LTree}}}}
+&    A + A^+ \times A^+  \ar[d]^{\ensuremath{\Varid{recLTree}\;\anaList{\Varid{g\char95 list2LTree}}}}
 \\
     LTree\ A \ar@/^2pc/ [rr]^-{\ensuremath{\mathsf{out}}} & \qquad \cong
-     &  A + (LTree\ A \times LTree\ A)
+     &  A + LTree\ A \times LTree\ A
       \ar@/^2pc/ [ll]^-{\ensuremath{\mathsf{in}}}
 }}
 
 \vspace{0.5cm}
 Primeiramente percebemos que o gene recebe uma lista não vazia e produz duas listas não vazias,
-ou no caso da lista singular devolve a mesma.
+ou no caso da lista singular devolve o elemento.
 Uma vez que estamos a trabalhar com listas não vazias resolvemos aplicar o \ensuremath{\Varid{outNElist}} que definimos anteriormente.
-Como este produz em vez de duas listas um elemento e uma lista, decidimos tornar o ùnico numa lista singular.
-Assim o resultado de \ensuremath{\Varid{list2LTree}} será uma árvore com o primeiro de cada sublista à esquerda
-auxiliar
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{splitHalf}\;(\Varid{a},\Varid{b})\mathrel{=}\Varid{splitAt}\;((\length \;\Varid{b}\mathbin{+}\mathrm{1})\mathbin{\Varid{`div`}}\mathrm{2})\;(\Varid{a}\mathbin{:}\Varid{b}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
+Assim ficamos com o tipo \ensuremath{\Conid{A}\mathbin{+}\Conid{A}\times\Conid{A}\mathbin{\char94 +}}. Para ficar com o tipo pretendido, à direita, definimos uma função auxiliar,
+\ensuremath{\Varid{splitHalf}} que, com o auxilio da função pré-definida, \ensuremath{\Varid{splitAt}}, divide recebe um par elemento lista e divide a meio a lista,
+produzindo um par com as duas metades da lista.
 
 \begin{center}
-\fbox{\begin{minipage}{23em}
+\fbox{\begin{minipage}{30em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{17}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{g\char95 list2LTree}\mathrel{=}{}\<[17]%
-\>[17]{}(\Varid{id}+\Varid{splitHalf})\comp \Varid{outNEList}{}\<[E]%
+\>[17]{}(\Varid{id}+\Varid{splitHalf})\comp \Varid{outNEList}\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{splitHalf}\;(\Varid{a},\Varid{b})\mathrel{=}\Varid{splitAt}\;((\length \;\Varid{b}\mathbin{+}\mathrm{1})\mathbin{\Varid{`div`}}\mathrm{2})\;(\Varid{a}\mathbin{:}\Varid{b}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{minipage}}
@@ -1772,7 +1769,7 @@ auxiliar
 Gene do catamorfismo:
 \vspace{0.5cm}
 
-\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\xymatrixcolsep{2pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
    LTree\ A\ \ar[d]_-{\ensuremath{\cataNat{\Varid{g\char95 lTree2MTree}}}}
                 \ar[rr]^-{\ensuremath{\mathsf{out}}} & \qquad
@@ -1793,30 +1790,29 @@ No caso de receber duas \ensuremath{{\FTree}} necessitamos as juntar e concatena
 e o \ensuremath{\Varid{c}} o par (hash,transação).
 \par Para encontrar o valor de hash de uma \ensuremath{{\FTree}} precisamos de definir as seguintes auxiliares:
 
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{getHash}\;(\Conid{Unit}\;\Varid{c})\mathrel{=}\p1\;\Varid{c}{}\<[E]%
-\\
-\>[B]{}\Varid{getHash}\;(\Conid{Comp}\;\Varid{a}\;\Varid{t})\mathrel{=}\Varid{a}{}\<[E]%
-\\
-\>[B]{}\Varid{calcHash}\;(\Varid{t1},\Varid{t2})\mathrel{=}\Varid{concHash}\;(\Varid{getHash}\;\Varid{t1},\Varid{getHash}\;\Varid{t2}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-Assim para obter o resultado pretendido usando o \ensuremath{\mathsf{in}} das \ensuremath{{\FTree}} que recebe o tipo:
+\par Assim para obter o resultado pretendido usando o \ensuremath{\mathsf{in}} das \ensuremath{{\FTree}} que recebe o tipo:
 \par\hspace{0.3cm}\xymatrix{( \mathbb{Z} \times A) + (\mathbb{Z} \times (Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \times Ftree\ \mathbb{Z}\ (\mathbb{Z}\ , A)))}
 
 \begin{center}
 \fbox{\begin{minipage}{40em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{48}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{g\char95 lTree2MTree}\mathbin{::}\Conid{Hashable}\;\Varid{c}\Rightarrow \Varid{c}+({\FTree}\;\mathbb{Z}\;(\mathbb{Z},\Varid{c}),{\FTree}\;\mathbb{Z}\;(\mathbb{Z},\Varid{c}))\to {\FTree}\;\mathbb{Z}\;(\mathbb{Z},\Varid{c}){}\<[E]%
 \\
 \>[B]{}\Varid{g\char95 lTree2MTree}\mathrel{=}\mathsf{in}\comp (\conj{\Varid{\Conid{Main}.hash}}{{}\<[48]%
-\>[48]{}\Varid{id}}+\conj{\Varid{calcHash}}{\Varid{id}}){}\<[E]%
+\>[48]{}\Varid{id}}+\conj{\Varid{calcHash}}{\Varid{id}})\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{getHash}\;(\Conid{Unit}\;\Varid{c})\mathrel{=}\p1\;\Varid{c}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{getHash}\;(\Conid{Comp}\;\Varid{a}\;\anonymous )\mathrel{=}\Varid{a}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{calcHash}\;(\Varid{t1},\Varid{t2})\mathrel{=}\Varid{concHash}\;(\Varid{getHash}\;\Varid{t1},\Varid{getHash}\;\Varid{t2}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{minipage}}
@@ -1827,7 +1823,7 @@ Gene de \ensuremath{\Varid{mroot}} ("get Merkle root"):
 \par Uma vez que \ensuremath{\Varid{computeMerkleTree}} produz uma \ensuremath{\Conid{MerkleTree}} temos que o diagrama de \ensuremath{\Varid{mroot}} é:
 \vspace{0.5cm}
 
-\xymatrixcolsep{1pc}\xymatrixrowsep{6pc}
+\xymatrixcolsep{2pc}\xymatrixrowsep{6pc}
 \centerline{\xymatrix{
    FTree\ \mathbb{Z}\ (\mathbb{Z}\ , A) \ar[d]_-{\ensuremath{\cataNat{\Varid{g\char95 mroot}}}}
                 \ar[rr]^-{\ensuremath{\mathsf{out}}} & \qquad
@@ -1867,24 +1863,23 @@ conforme a diferença entre os valores de hash que a mudança na transação cau
 \par Para descobrir o gene do anamorfismo \ensuremath{\Varid{pairsList}} recorremos ao seu diagrama.
 \vspace{0.5cm}
 
-\xymatrixcolsep{1pc}\xymatrixrowsep{5pc}
+\xymatrixcolsep{2pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
    A^*\ \ar[d]_-{\ensuremath{\anaList{\Varid{g\char95 pairsList}}}}
             \ar[rr]^-{\ensuremath{\Varid{g\char95 list2LTree}}} & \qquad
-&    1\ + ((A \times A) \times A^*)  \ar[d]^{\ensuremath{\Varid{recList}\;\anaList{\Varid{g\char95 pairsList}}}}
+&    1\ + (A \times A) \times A^*  \ar[d]^{\ensuremath{\Varid{recList}\;\anaList{\Varid{g\char95 pairsList}}}}
 \\
     (A,A)^* \ar@/^2pc/ [rr]^-{\ensuremath{\Varid{outList}}} & \qquad \cong
-     &  1\ + ((A\times A) \times (A,A)^*)
+     &  1\ + (A\times A) \times (A,A)^*
       \ar@/^2pc/ [ll]^-{\ensuremath{\Varid{inList}}}
 }}
 
 \vspace{0.5cm}
-\par Pela análise do diagrama, concluimos que o gene \ensuremath{\Varid{g\char95 pairsList}} recebe uma lista e produz no,
+\par Pela análise do diagrama, concluimos que o gene \ensuremath{\Varid{g\char95 pairsList}} recebe uma lista e produz,
 ou uma lista vazia ou um par e uma lista. Tendo em conta que a lista tem de ser par, o primeiro passo foi utilizar a auxiliar
-\ensuremath{\Varid{getEvenBlock}}. Em seguida utilizamos uma vez o \ensuremath{\Varid{outList}}, olhando para o segundo elemento do either produzido por este,
-para obter o par precisavamos de mais um elemento da lista pelo que utilizamos um split, ficando com o tipo:
-\hspace{0.3cm}\xymatrix{1\ + (A \times (A \times A^*))}.
-Com este tipo simplesmente nos basta um passo para produzir o que pretendemos,
+\ensuremath{\Varid{getEvenBlock}}. Em seguida utilizamos o \ensuremath{\Varid{outList}}, olhando para o segundo elemento do either produzido por este, concluimos
+para obter o par precisavamos de mais um elemento da lista pelo que utilizamos um split, ficando com o tipo: \ensuremath{(\Conid{A}\times(\Conid{A}\times\Conid{A}\mathbin{\char94 *}))}
+\par Com este tipo simplesmente nos basta um passo para produzir o pretendido,
 sendo que usamos a \ensuremath{\Varid{assocl}} estudada nas aulas.
 
 \begin{hscode}\SaveRestoreHook
@@ -1899,10 +1894,10 @@ sendo que usamos a \ensuremath{\Varid{assocl}} estudada nas aulas.
 \fbox{\begin{minipage}{38em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{23}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{g\char95 pairsList}\mathrel{=}(\Varid{id}+{}\<[23]%
-\>[23]{}\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{tail}}))\comp \Varid{outList}\comp \Varid{getEvenBlock}{}\<[E]%
+\>[B]{}\Varid{g\char95 pairsList}\mathrel{=}(\Varid{id}+{}\<[24]%
+\>[24]{}\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{tail}}))\comp \Varid{outList}\comp \Varid{getEvenBlock}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{minipage}}
@@ -1910,27 +1905,27 @@ sendo que usamos a \ensuremath{\Varid{assocl}} estudada nas aulas.
 
 Mais uma vez recorremos a um diagrama para compreender os genes pedidos
 e os seus tipos. Para chegar à sua versão final tivemos de compreender
-o \ensuremath{\Varid{conquer}}, o que é um either, em que o lado esuqerdo é o \ensuremath{\Varid{head}} de uma lista,
-que tendo em conta  o que este produz, será uma lista com uma \ensuremath{\Conid{MerkleTree}} singular,
-isto é a \ensuremath{\Conid{Merkle}\;\Conid{Root}}. Conhecendo o tipo da \ensuremath{\Varid{joinMerkleTree}} foi possivel saber o tipo do
-lado direito do either, e assim obter o resto do diagrama.
+o \ensuremath{\Varid{conquer}}, que é um either, em que o lado esquerdo é a \ensuremath{\Varid{head}} de uma lista,
+que tendo em conta o problema, será uma lista com uma \ensuremath{\Conid{MerkleTree}} singular.
+Conhecendo o tipo da \ensuremath{\Varid{joinMerkleTree}} foi possivel
+chegar ao tipo do lado direito do either, e assim obter o resto do diagrama.
 \vspace{0.5cm}
 
-\xymatrixcolsep{8pc}\xymatrixrowsep{6pc}
+\xymatrixcolsep{8pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
 \mathbb{Z}^+\
 		\ar[r]^-{\ensuremath{\Varid{divide}}}
 		\ar[d]_-{\ensuremath{\anaList{\Varid{divide}}}}
 &
 FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+ \times\ \mathbb{Z}^+\
-		\ar[d]^{\ensuremath{\Varid{id}\times\Varid{id}\mathbin{+}\anaList{\Varid{divide}}}}
+		\ar[d]^{\ensuremath{\Varid{id}\mathbin{+}\Varid{id}\times\anaList{\Varid{divide}}}}
 \\
 	(FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
 		\ar[d]_-{\ensuremath{\cataNat{\Varid{conquer}}}}
 		\ar@/^2pc/[r]^-{\ensuremath{\Varid{outNEList}}}
 &
 FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+\ \times (FTree\ \mathbb{Z}\ \mathbb{Z} ^+)^+
-		\ar[d]^{\ensuremath{\Varid{id}\times\Varid{id}\mathbin{+}\cataNat{\Varid{conquer}}}}
+		\ar[d]^{\ensuremath{\Varid{id}\mathbin{+}\Varid{id}\times\cataNat{\Varid{conquer}}}}
 		\ar@/^2pc/[l]^-{\ensuremath{\Varid{inNEList}}}
 \\
 	FTree\ \mathbb{Z}\ \mathbb{Z}
@@ -1940,44 +1935,79 @@ FTree \mathbb{Z}\ \mathbb{Z} ^+\ +\ FTree \mathbb{Z}\ \mathbb{Z} ^+\ \times (FTr
 }}
 
 \vspace{0.5cm}
-Distinto da primeira parte deste problema, em \ensuremath{{\FTree}\;\Varid{a}\;\Varid{c}}, c corresponde ao valor de hash de uma folha, da \ensuremath{\Conid{Unit}}, e o a
+Distinto da primeira parte deste problema, em \ensuremath{{\FTree}\;\Varid{a}\;\Varid{c}}, \ensuremath{\Varid{c}} corresponde ao valor de hash de uma folha, da \ensuremath{\Conid{Unit}}, e o \ensuremath{\Varid{a}}
 corresponde à concatenação dos filhos.
 \par Para resolver estes genes tivemos de perceber em que fase do algoritmo estes se encontram.
 Sendo que já temos a uma lista de pares a ser produzida, com a \ensuremath{\Varid{pairsList}}, resta-nos os passos 4 e 5 do algoritmo.
-Pelo diagrama anterior, concluimos que o divide será o passo 4, uma vez que este apresenta uma lista de sub-árvores como mencionado.
-\par Para o divide primeiro aplicamos o \ensuremath{\Varid{outNEList}}, para ficar com um tipo idêntico ao pretendido, precisando agora apenas de
-transpormar o elemento singular em \ensuremath{{\FTree}} e
-
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{55}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{classicMerkleTree}\mathbin{::}\Conid{Hashable}\;\Varid{a}\Rightarrow [\mskip1.5mu \Varid{a}\mskip1.5mu]\to {\FTree}\;\mathbb{Z}\;\mathbb{Z}{}\<[E]%
 \\
 \>[B]{}\Varid{classicMerkleTree}\mathrel{=}(\Varid{hyloNEList}\;\Varid{conquer}\;\Varid{divide})\comp (\map \;\Varid{\Conid{Main}.hash}){}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{singleFTree}\;(\Varid{a},\Varid{b})\mathrel{=}\Conid{Comp}\;(\Varid{concHash}\;(\Varid{a},\Varid{b}))\;(\Conid{Unit}\;\Varid{a},\Conid{Unit}\;\Varid{b}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Pelo diagrama anterior, concluimos que o divide irá juntar os passos 1 ao 4.
+\par Sendo assim, o nosso objetivo seria, partindo de uma lista não vazia, criar no caso de uma lista singular, um \ensuremath{\Conid{Unit}}, correspondendo ao valor da
+\ensuremath{\Conid{MerkleTree}\;\Conid{Root}}, e no caso de uma lista não singular, fazer os passos 3 e 4. Isto é, primeiro criar pares, com o auxilio da
+anteriormente definida \ensuremath{\Varid{pairsList}}, de seguida criar uma lista de (sub)-\ensuremath{\Conid{MerkleTree}} definindo, para isto uma auxiliar \ensuremath{\Varid{concPair}}.
+\par Tendo em conta o inicio do passo 5, caso a lista não seja singular, necessitamos de voltar ao passo 2 com a lista das cabeças como argumento.
+Assim sendo, definimos a \ensuremath{\Varid{concPair}} e a \ensuremath{\Varid{concH}} que, partindo de uma lista de pares produzem uma lista de sub-àrvores e uma lista com as concatenações, respetivamente.
+
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{89}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{divide}\mathrel{=}((\Varid{singl}\comp \Conid{Unit})+\conj{\Varid{concPair}}{\Varid{concH}}\comp (\Varid{pairsList}\comp \Varid{cons}))\comp \Varid{outNEList}\;{}\<[89]%
+\>[89]{}\mathbf{where}{}\<[E]%
 \\
-\>[B]{}\Varid{divide}\mathrel{=}\bot \;{}\<[21]%
-\>[21]{}(\Varid{singleFTree}+)\comp \Varid{outNEList}\comp {}\<[55]%
-\>[55]{}\Varid{pairsList}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\Varid{conquer}\mathrel{=}\bot \;\alt{\cdot }{\cdot }\;\Varid{head}\;\Varid{joinMerkleTree}\;\mathbf{where}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{concPair}\mathrel{=}\cataList{\Varid{inList}\comp (\Varid{id}+\Varid{aux}\times\Varid{id})}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{aux}\;(\Varid{a},\Varid{b})\mathrel{=}\Conid{Comp}\;(\Varid{concHash}\;(\Varid{a},\Varid{b}))\;(\Conid{Unit}\;\Varid{a},\Conid{Unit}\;\Varid{b}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{concH}\mathrel{=}\cataList{\Varid{inList}\comp (\Varid{id}+\Varid{concHash}\times\Varid{id})}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\par O passo 5 e final do algoritmo, compõe a \ensuremath{\Conid{MerkleTree}}.
+Para tal precisamos de definir o \ensuremath{\Varid{conquer}}.
+Foi-nos já fornecida parte da definição deste, sendo que apenas tinhamos de definir o gene do catamorfismo de
+\ensuremath{\Varid{mergeMerkleTree}}, que recebe uma \ensuremath{\Conid{MerkleTree}} e uma lista par.
+\par No caso de receber um \ensuremath{\Conid{Unit}} e a lista, isto significa que que a list apenas terá um elemento, pelo que retornamos
+a \ensuremath{\Varid{merkleTree}} dentro da lista, que tem como valor de hash o valor do \ensuremath{\Conid{Unit}} e as suas folhas.
+\par O \ensuremath{h_2 } recebe o  tipo \ensuremath{(\Conid{Inteiro},(\Varid{f},\Varid{g}))\;\Varid{l}}, onde \ensuremath{\Varid{f}} e \ensuremath{\Varid{g}} são a \ensuremath{\Varid{mergeMerkleTree}} das folhas.
+Chegando a esta conclusão, e analizando o resultado do \ensuremath{\Varid{anaNEList}\;\Varid{divide}}, percebemos que tinhamos de dividir a lista
+recebida a meio e atribuir cada uma como argumento às folhas. Para dividir a lista em 2 definimos uma auxiliar \ensuremath{\Varid{splitHalf}}.
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{conquer}\mathrel{=}{}\<[12]%
+\>[12]{}\alt{\Varid{head}}{\Varid{joinMerkleTree}}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
 \>[7]{}\Varid{joinMerkleTree}\;(\Varid{l},\Varid{m})\mathrel{=}\Varid{mergeMerkleTree}\;\Varid{m}\;(\Varid{evenMerkleTreeList}\;\Varid{l}){}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
-\>[7]{}\Varid{mergeMerkleTree}\mathrel{=}\bot \;\llparenthesis\, \cdot \,\rrparenthesis\;\alt{h_1 }{h_2 }{}\<[E]%
+\>[7]{}\Varid{mergeMerkleTree}\mathrel{=}\llparenthesis\, \alt{h_1 }{h_2 }\,\rrparenthesis{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
-\>[7]{}h_1 \;\Varid{c}\;\Varid{l}\mathrel{=}\Varid{c}{}\<[E]%
+\>[7]{}h_1 \;\Varid{c}\;\Varid{l}\mathrel{=}\Varid{head}\;\Varid{l}{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
-\>[7]{}h_2 \;(\Varid{c},(\Varid{f},\Varid{g}))\;\Varid{l}\mathrel{=}(\Varid{c},((\Varid{head}\;\Varid{l}),\Varid{last}\;\Varid{l})){}\<[E]%
+\>[7]{}h_2 \;(\Varid{c},(\Varid{f},\Varid{g}))\;\Varid{l}\mathrel{=}\Conid{Comp}\;\Varid{c}\;(\Varid{f}\;(\p1\;(\Varid{splitHalf}\;\Varid{l})),\Varid{g}\;(\p2\;(\Varid{splitHalf}\;\Varid{l}))){}\<[E]%
+\\
+\>[B]{}\hsindent{7}{}\<[7]%
+\>[7]{}\Varid{splitHalf}\;\Varid{l}\mathrel{=}\Varid{splitAt}\;((\length \;\Varid{l})\mathbin{\Varid{`div`}}\mathrm{2})\;\Varid{l}{}\<[E]%
 \\
 \>[B]{}\hsindent{7}{}\<[7]%
 \>[7]{}\Varid{evenMerkleTreeList}\mathrel{=}\Varid{getEvenBlock}{}\<[E]%
@@ -2004,12 +2034,12 @@ da lei de recursividade mútua, em que o \ensuremath{\Varid{f}} é o \ensuremath
 %
 \just\equiv{\textcolor{blue}{Pelas\ definições\ fornecidas\ podemos\ definirmo\ h\ e\ k}}
 %
-\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\underline{\mathrm{0}}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}(((\neg \comp \Varid{sp}\comp \p1)\mathrel{\wedge}(\p2\comp \p2))\to (\succ \comp \p1\comp \p2),(\p1\comp \p2))\comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\;(\Varid{c},\Varid{l})\end{lcbr}}\\ & &
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\mathrm{0}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}(((\neg \comp \Varid{sp}\comp \p1)\mathrel{\wedge}(\p2\comp \p2))\to (\succ \comp \p1\comp \p2),(\p1\comp \p2))\comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\;(\Varid{c},\Varid{l})\end{lcbr}}\\ & &
 \ensuremath{\begin{lcbr}\Varid{lookahead\char95 sep}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\Conid{True}\\\Varid{lookahead\char95 sep}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}(\Varid{sp}\comp \p1)\comp (\Varid{id}\times\conj{\Varid{wc\char95 w}}{\Varid{lookahead\char95 sep}})\;(\Varid{c},\Varid{l})\end{lcbr}}
 %
 \just\equiv{\textcolor{blue}{Natural-p1\ (12)}}
 %
-\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\underline{\mathrm{0}}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}\mathbf{if}\;\neg \comp (\Varid{sep}\;\Varid{c})\mathrel{\wedge}\Varid{lookahead\char95 sep}\;\Varid{l}\;\mathbf{then}\;\Varid{wc\char95 w}\;\Varid{l}\mathbin{+}\mathrm{1}\;\mathbf{else}\;\Varid{wc\char95 w}\;\Varid{l}\end{lcbr}}\\ & &
+\ensuremath{\begin{lcbr}\Varid{wc\char95 w}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\mathrm{0}\\\Varid{wc\char95 w}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}\mathbf{if}\;\neg \comp (\Varid{sep}\;\Varid{c})\mathrel{\wedge}\Varid{lookahead\char95 sep}\;\Varid{l}\;\mathbf{then}\;\Varid{wc\char95 w}\;\Varid{l}\mathbin{+}\mathrm{1}\;\mathbf{else}\;\Varid{wc\char95 w}\;\Varid{l}\end{lcbr}}\\ & &
 \ensuremath{\begin{lcbr}\Varid{lookahead\char95 sep}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}\Conid{True}\\\Varid{lookahead\char95 sep}\;(\Varid{c}\mathbin{:}\Varid{l})\mathrel{=}\Varid{sp}\;\Varid{c}\end{lcbr}}
 \end{eqnarray*}
 
@@ -2088,11 +2118,10 @@ Primeiro tivemos de compreender o tipo \ensuremath{\Conid{X}}, para fazer o eith
 No caso de ser do tipo \ensuremath{(\Varid{i},(\Conid{X}\;\Varid{u}\;\Varid{i},\Conid{X}\;\Varid{u}\;\Varid{i})} presisamos de fazer uncurry duas vezes após usar a auxiliar \ensuremath{\Varid{assocl}}:
 \vspace{0.5cm}
 
-\xymatrixcolsep{2pc}\xymatrixrowsep{3pc}
+\xymatrixcolsep{5pc}\xymatrixrowsep{3pc}
 \centerline{\xymatrix{
-   (i, (X u i, X u i) \ar[rr]^-{\ensuremath{\Varid{assocl}}} && ((i,X u i),X u i) \ar[rr]^-{\ensuremath{\uncurry{\Conid{Node}}}} && X u (i, X u i) \ar[rr]^-{\ensuremath{\uncurry{\Conid{Node}}}} && X u i
+   (i, (X u i, X u i) \ar[rr]^-{\ensuremath{\Varid{assocl}}} && ((i,X u i),X u i) \ar[rr]^-{\ensuremath{\uncurry{\uncurry{\Conid{Node}}}}} && X u i
 }}
-
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2115,40 +2144,65 @@ No caso de ser do tipo \ensuremath{(\Varid{i},(\Conid{X}\;\Varid{u}\;\Varid{i},\
 \\[\blanklineskip]%
 \>[B]{}\Varid{anaX}\;\Varid{f}\mathrel{=}\Varid{inX}\comp (\Varid{recX}\;(\Varid{anaX}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{hyloLTree}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataX}\;\Varid{f}\comp \Varid{anaX}\;\Varid{g}{}\<[E]%
+\>[B]{}\Varid{hyloX}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataX}\;\Varid{f}\comp \Varid{anaX}\;\Varid{g}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-A evolução da biblioteca anterior para uma outra que permita partições n-arias (para qualquer n
-finito) e nao apenas binárias
+\vspace{0.5cm}
+De seguida foi preciso atualizara biblioteca anterior para uma outra que permita partições n-árias.
+\vspace{0.3cm}
 \begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{26}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{Xn}\;\Varid{u}\;\Varid{i}\mathrel{=}\Conid{XLeafn}\;\Varid{u}\mid \Conid{Noden}\;\Varid{i}\;[\mskip1.5mu \Conid{Xn}\;\Varid{u}\;\Varid{i}\mskip1.5mu]\;\mathbf{deriving}\;\Conid{Show}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{inXn}\mathbin{::}\Varid{u}+(\Varid{i},[\mskip1.5mu \Conid{Xn}\;\Varid{u}\;\Varid{i}\mskip1.5mu])\to \Conid{Xn}\;\Varid{u}\;\Varid{i}{}\<[E]%
+\\
+\>[B]{}\Varid{inXn}\mathrel{=}\alt{\Conid{XLeafn}}{\uncurry{\Conid{Noden}}}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{outXn}\;(\Conid{XLeafn}\;\Varid{u})\mathrel{=}i_1\;\Varid{u}{}\<[E]%
+\\
+\>[B]{}\Varid{outXn}\;(\Conid{Noden}\;\Varid{i}\;\Varid{l})\mathrel{=}i_2\;(\Varid{i},\Varid{l}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{baseXn}\;\Varid{f}\;\Varid{h}\;\Varid{g}\mathrel{=}\Varid{f}+(\Varid{h}{}\<[26]%
+\>[26]{}\times\map \;\Varid{g}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{recXn}\;\Varid{f}\mathrel{=}\Varid{baseXn}\;\Varid{id}\;\Varid{id}\;\Varid{f}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{cataXn}\;\Varid{g}\mathrel{=}\Varid{g}\comp \Varid{recXn}\;(\Varid{cataXn}\;\Varid{g})\comp \Varid{outXn}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{anaXn}\;\Varid{f}\mathrel{=}\Varid{inXn}\comp (\Varid{recXn}\;(\Varid{anaXn}\;\Varid{f}))\comp \Varid{f}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{hyloXn}\;\Varid{f}\;\Varid{g}\mathrel{=}\Varid{cataXn}\;\Varid{f}\comp \Varid{anaXn}\;\Varid{g}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-
 \subsection*{Problema 4}
 \vspace{0.3cm}
 \subsubsection*{PairL}
-\par Sendo o \ensuremath{\Varid{pairL}} um anamorfismo de listas podemos podemos representalo como o seguinte diagrama abaixo.
-Deste retiramos que o gene de \ensuremath{\Varid{pairL}} produz, no caso de não vazia, um par à cabeça da mesma, com os dois primeiros elementos,
-isto é, a cabeça e o primeiro elemento da cauda, e a cauda (\ensuremath{\Varid{tail}}).
-\par Para obter esta solução, utilizamos o \ensuremath{\Varid{outList}} para produzir um either. Sendo que o lado esquerdo já está como queremos,
-bastou, no lado direito, utilizar um split para por no tipo \ensuremath{\Conid{A}\times(\Conid{A}\times\Conid{A}\mathbin{*})}, em que o o segundo A é a \ensuremath{\Varid{head}} da \ensuremath{\Varid{tail}} da lista original,
-e a lista é essa mesma \ensuremath{\Varid{tail}}. Após ter este tipo utilizamos a \ensuremath{\Varid{assocl}} para produzir o resultado pretendido.
-
+\par Sendo o \ensuremath{\Varid{pairL}} um anamorfismo de listas, podemos representa-lo pelo diagrama abaixo.
 \vspace{0.5cm}
 
 \xymatrixcolsep{6pc}\xymatrixrowsep{5pc}
 \centerline{\xymatrix{
    A^*\ \ar[d]_-{\ensuremath{\Varid{pairL}}}
    \ar[rr]^-{\ensuremath{(\Varid{id}\mathbin{+}\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{id}}))\comp \Varid{outNEList}}} & \qquad
-&    1 + ((A,A)^* \times A^*)  \ar[d]^{\ensuremath{\Varid{recList}\;\Varid{pairL}}}
+&    A + ((A,A) \times A^*)  \ar[d]^{\ensuremath{\Varid{recList}\;\Varid{pairL}}}
 \\
     (A,A)^* &
-     &  1 + ((A,A) \times (A,A)^*) \ar[ll]^-{\ensuremath{\Varid{inList}}}
+     &  A + ((A,A) \times (A,A)^*) \ar[ll]^-{\ensuremath{\Varid{inList}}}
 }}
 
 \vspace{0.5cm}
 
+\par Para obter a solução, utilizamos o \ensuremath{\Varid{outNEList}}. Sendo que o lado esquerdo será o elemento único que irá ser ignorado,
+uma vez que o problema se aplica a listas de tamanho maior que 1,
+No lado direito, aplicamos um split para por no tipo \ensuremath{\Conid{A}\times(\Conid{A}\times\Conid{A}\mathbin{*})}, em que o segundo \ensuremath{\Conid{A}} é a \ensuremath{\Varid{head}} da \ensuremath{\Varid{tail}} da lista original,
+e a lista é essa mesma \ensuremath{\Varid{tail}}. Após ter este tipo utilizamos a \ensuremath{\Varid{assocl}} para produzir o resultado pretendido.
+\vspace{0.5cm}
+
+\begin{center}
+\fbox{\begin{minipage}{27em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2161,51 +2215,91 @@ e a lista é essa mesma \ensuremath{\Varid{tail}}. Após ter este tipo utilizamo
 \>[3]{}\Varid{g}\mathrel{=}(\Varid{id}+\Varid{assocl}\comp (\Varid{id}\times\conj{\Varid{head}}{\Varid{id}}))\comp \Varid{outNEList}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+\end{minipage}}
+\end{center}
 
 \subsubsection*{markMap}
-\par Para conseguir chegar ao resutado de f2 precisamos primeiro de entender o que um mapa representa e como modifica-lo.
+\par Para conseguir chegar ao resutado de \ensuremath{f_2 } precisamos de perceber o que um mapa representa e como modificá-lo.
 A primiera conclusão a que chegamos, analisando o exemplo apresentado no problema 4 do Capitulo 1, foi que a posição (0,0) é a última à esquerda, posição (0,1) a acima dessa, e a posição (1,0) a da direita do mapa.
-Ou seja uma posição é do tipo (linha,coluna).
+Ou seja uma posição é do tipo (coluna,linha).
 \par De seguida, pela análise dos mapas fornecidos, percebemos que, na matriz, o primeiro elemento diz respeito à linha inferior do mapa, a segunda a linha a cima e assim adiante.
-Chegando a estas conclusões podemos afirmar que, ao executar a \ensuremath{\Varid{toCell}} entre duas posições o resultado significa que:
-\begin{itemize}
-\item \textbf{Lft} - iremos passar a atualizar a posição seguinte no mesmo elemnto da matriz
-\item \textbf{Rght} - iremos passar a atualizar a posição anterior no mesmo elemnto da matriz
-\item \textbf{UP} - iremos passar a mesma a posição no elemento seguinte da matriz
-\item \textbf{Down} - iremos passar a mesma a posição no elemento anterior da matriz
-\end{itemize}
-
+\par resolvemos desenvolver o catamorfismo pela aplicação da \ensuremath{\Conid{Lei}\;\Conid{Universal}\;\Varid{dos}\;\Conid{Catamorfismos}}:
+\begin{eqnarray*}
+\start
+  \ensuremath{\Varid{markMap}\;\Varid{l}\mathrel{=}\cata{[\mskip1.5mu \underline{\Varid{id}},f_2 \mskip1.5mu]}\;(\Varid{pairL}\;\Varid{l})}
+%
+\just\equiv{\textcolor{blue}{Universal-cata\ (45)}}
+%
+  \ensuremath{\Varid{markMap}\comp \Varid{inList}\;\Varid{l}\mathrel{=}[\mskip1.5mu \underline{\Varid{id}},f_2 \mskip1.5mu]\comp \Conid{F}\;\Varid{markMap}\;(\Varid{pairL}\;\Varid{l})}
+%
+\just\equiv{\textcolor{blue}{inList,\ F\ markMap,\ Fusão-+\ (20),\ Absorção-+\ (22),\ Eq-+\ (27)}}
+%
+      \ensuremath{\begin{lcbr}\Varid{markMap}\comp \Varid{nil}\;\Varid{l}\mathrel{=}\underline{\Varid{id}}\\\Varid{markMap}\comp \Varid{cons}\;\Varid{l}\mathrel{=}f_2 \comp (\Varid{id}\times\Varid{markMap})\;(\Varid{pairL}\;\Varid{l})\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{nil,\ cons}}
+%
+      \ensuremath{\begin{lcbr}\Varid{markMap}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]\\\Varid{markMap}\;(\Varid{pt1}\mathbin{:}\Varid{pt2}\mathbin{:}\Varid{t})\mathrel{=}f_2 \comp (\Varid{id}\times\Varid{markMap})\;((\Varid{pt1},\Varid{pt2}),\Varid{t})\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{f2}}
+%
+      \ensuremath{\begin{lcbr}\Varid{markMap}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]\\\Varid{markMap}\;(\Varid{pt1}\mathbin{:}\Varid{pt2}\mathbin{:}\Varid{t})\mathrel{=}\Varid{aux}\comp (\Varid{substMatriz}\comp \conj{\uncurry{\Varid{toCell}}}{\p1}\;(\Varid{pt1},\Varid{pt2})\times\Varid{markMap}\;\Varid{t})\end{lcbr}}
+%
+\just\equiv{\textcolor{blue}{}}
+%
+      \ensuremath{\begin{lcbr}\Varid{markMap}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]\\\Varid{markMap}\;(\Varid{pt1}\mathbin{:}\Varid{pt2}\mathbin{:}\Varid{t})\mathrel{=}(\Varid{substMatriz}\comp \conj{\uncurry{\Varid{toCell}}\;(\Varid{pt1},\Varid{pt2})}{\Varid{pt1}})\comp \Varid{markMap}\;\Varid{t}\end{lcbr}}
+\end{eqnarray*}
+\par Assim conseguimos definir o \ensuremath{\Conid{MarkMap}} utilizando a auxiliar fornecida \ensuremath{\Varid{subst}} e a \ensuremath{\Varid{toCell}}.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{markMap}\mathbin{::}[\mskip1.5mu \Conid{Pos}\mskip1.5mu]\to \Conid{Map}\to \Conid{Map}{}\<[E]%
 \\
 \>[B]{}\Varid{markMap}\;\Varid{l}\mathrel{=}\cataList{\alt{\underline{\Varid{id}}}{f_2 }}\;(\Varid{pairL}\;\Varid{l})\;\mathbf{where}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}f_2 \mathrel{=}{}\<[9]%
-\>[9]{}\bot {}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-
+\begin{center}
+\fbox{\begin{minipage}{30em}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[3]{}f_2 \mathrel{=}\Varid{aux}\comp (\Varid{substMatriz}\comp \conj{\uncurry{\Varid{toCell}}}{\p1}\times\Varid{id}){}\<[E]%
+\\
+\>[3]{}\Varid{substMatriz}\;(\Varid{c},(\Varid{x},\Varid{y}))\;\Varid{m}\mathrel{=}\Varid{subst}\;(\Varid{subst}\;\Varid{c}\;\Varid{x}\;(\Varid{m}\mathbin{!!}\Varid{y}))\;\Varid{y}\;\Varid{m}{}\<[E]%
+\\
+\>[3]{}\Varid{aux}\;(\Varid{f},\Varid{g})\mathrel{=}\Varid{f}\comp \Varid{g}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\end{minipage}}
+\end{center}
+\vspace{0.5cm}
+Neste momento é nos pedido para definir \ensuremath{\Varid{scout}}, que é um catamorfismo natural,
+cujo gene é um either composto por \ensuremath{f_1 } e o \ensuremath{\Varid{bind}} de \ensuremath{f_2 \;\Varid{m}\;\Varid{s}}
+\par Primeiramente usamos a auxuliar \ensuremath{\Varid{checkAround}} que nos retorna uma lista com as posições válidas,
+em seguida...
+\vspace{0.5cm}
+\begin{center}
+\fbox{\begin{minipage}{25em}
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{9}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{scout}\mathbin{::}\Conid{Map}\to \Conid{Pos}\to \Conid{Pos}\to \Conid{Int}\to [\mskip1.5mu [\mskip1.5mu \Conid{Pos}\mskip1.5mu]\mskip1.5mu]{}\<[E]%
 \\
 \>[B]{}\Varid{scout}\;\Varid{m}\;\Varid{s}\;\Varid{t}\mathrel{=}\cataNat{\alt{f_1 }{(\bind f_2 \;\Varid{m}\;\Varid{s})}}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}f_1 \mathrel{=}\bot {}\<[E]%
+\>[3]{}f_1 \mathrel{=}{}\<[9]%
+\>[9]{}\Varid{singl}\comp \Varid{singl}\comp \underline{\Varid{s}}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}f_2 \mathrel{=}\bot {}\<[E]%
+\>[3]{}f_2 \mathrel{=}\bot \mbox{\onelinecomment  checkAround}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-
+\end{minipage}}
+\end{center}
+\vspace{0.5cm}
 \paragraph{Valorização}
 \par Completar as seguintes funções de teste no \QuickCheck\ para verificação de propriedades das funções pedidas, a saber:
 
@@ -2218,7 +2312,7 @@ dos pares em (\ensuremath{\Varid{pairL}\;\Varid{l}}) é a lista original \ensure
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop\char95 reconst}\;\Varid{l}\mathrel{=}(\map \;\p1\;(\Varid{pairL}\;\Varid{l}))\equiv (\Varid{init}\;\Varid{l})\mathrel{\wedge}(\map \;\p2\;(\Varid{pairL}\;\Varid{l}))\equiv (\Varid{tail}\;\Varid{l}){}\<[E]%
+\>[B]{}\Varid{prop\char95 reconst}\;\Varid{l}\mathrel{=}(\map \;\p1\;(\Varid{pairL}\;\Varid{l})\equiv (\Varid{init}\;\Varid{l}))\mathrel{\wedge}((\map \;\p2\;(\Varid{pairL}\;\Varid{l}))\equiv (\Varid{tail}\;\Varid{l})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \end{propriedade}
@@ -2230,28 +2324,25 @@ da primeira linha também prefixa a representação da segunda linha:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop\char95 prefix2}\;\Varid{l}\;\Varid{l'}\mathrel{=}(\Varid{tail}\;\Varid{l'})\equiv (\Varid{tail}\;\Varid{l}){}\<[E]%
+\>[B]{}\Varid{prop\char95 prefix2}\;\Varid{l}\;\Varid{l'}\mathrel{=}\Varid{prefixes}\;\Varid{l}\equiv \Varid{l'}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \begin{propriedade}
-Para qualquer linha (de um mapa), a sua representação  deve conter um número de símbolos correspondentes a um tipo célula igual
-ao número de vezes que esse tipo de célula aparece na linha em questão.
+Para qualquer linha (de um mapa), a sua representação deve conter um número de símbolos correspondentes a
+um tipo célula igual ao número de vezes que esse tipo de célula aparece na linha em questão.
 \end{propriedade}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop\char95 nmbrs}\;\Varid{l}\;\Varid{c}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{prop\char95 nmbrs}\;\Varid{l}\;\Varid{c}\mathrel{=}\Varid{count}\;(\Varid{fromCell}\;(\Varid{head}\;\Varid{l}))\;\Varid{c}\equiv \Varid{count}\;(\Varid{head}\;\Varid{c})\;\Varid{c}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\Varid{count}\mathbin{::}(\Conid{Eq}\;\Varid{a})\Rightarrow \Varid{a}\to [\mskip1.5mu \Varid{a}\mskip1.5mu]\to \Conid{Int}{}\<[E]%
 \\
-\>[B]{}\Varid{count}\mathrel{=}\overline{\Varid{unccount}}\;\mathbf{where}{}\<[E]%
+\>[B]{}\Varid{count}\mathrel{=}\Varid{aux}\;\mathbf{where}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{uncount}\;(\Varid{a},[\mskip1.5mu \mskip1.5mu])\mathrel{=}\mathrm{0}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{unccount}\;(\Varid{a},\Varid{l})\mathrel{=}\mathbf{if}\;(\Varid{a}\equiv \Varid{head}\;\Varid{l})\;\mathbf{then}\;\Varid{uncount}\;(\Varid{a},\Varid{tail}\;\Varid{l})\mathbin{+}\mathrm{1}\;\mathbf{else}\;\Varid{uncount}\;(\Varid{a},\Varid{tail}\;\Varid{l}){}\<[E]%
+\>[3]{}\Varid{aux}\;\Varid{x}\mathrel{=}\length \comp \Varid{filter}\;(\equiv \Varid{x}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2260,10 +2351,18 @@ Para qualquer lista \ensuremath{\Varid{l}} a função \ensuremath{\Varid{markMap
 \end{propriedade}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{42}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{64}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{inBounds}\;\Varid{m}\;(\Varid{x},\Varid{y})\mathrel{=}(\Varid{nlines}\;\Varid{m})\equiv \Varid{x}\mathrel{\wedge}(\Varid{ncols}\;\Varid{m})\equiv \Varid{y}{}\<[E]%
+\>[B]{}\Varid{inBounds}\;\Varid{m}\;(\Varid{x},\Varid{y})\mathrel{=}(\Varid{nlines}\;\Varid{m})\geq \Varid{x}\mathrel{\wedge}(\Varid{ncols}\;\Varid{m})\geq \Varid{y}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\Varid{prop\char95 idemp2}\;\Varid{l}\;\Varid{m}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{prop\char95 idemp2}\;\Varid{l}\;\Varid{m}\mathrel{=}\Varid{isValidMap}\;\Varid{m}\mathrel{\wedge}\Varid{isValidMap}\;(\Varid{markMap}\;\Varid{l}\;\Varid{m})\mathrel{\wedge}{}\<[64]%
+\>[64]{}(\Varid{and}\;(\map \;(\Varid{inBounds}\;\Varid{m})\;\Varid{l})){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathrel{\wedge}(\Varid{ncols}\;\Varid{m})\equiv (\Varid{ncols}\;(\Varid{markMap}\;\Varid{l}\;\Varid{m})){}\<[42]%
+\>[42]{}\mathrel{\wedge}(\Varid{nlines}\;\Varid{m})\equiv (\Varid{nlines}\;(\Varid{markMap}\;\Varid{l}\;\Varid{m})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \begin{propriedade}
@@ -2273,18 +2372,18 @@ as células correspondentes no mapa deixem de ser \ensuremath{\Conid{Free}}.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop\char95 extr2}\;\Varid{l}\;\Varid{m}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{prop\char95 extr2}\;\Varid{l}\;\Varid{m}\mathrel{=}((\Varid{m}\mathbin{!!}(\p1\;(\Varid{head}\;\Varid{l})))\mathbin{!!}(\p2\;(\Varid{head}\;\Varid{l}))\not\equiv \Conid{Free})\mathbin{:}\Varid{prop\char95 extr2}\;(\Varid{tail}\;\Varid{l})\;\Varid{m}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 \begin{propriedade}
-Quanto maior for o tamanho máximo dos caminhos  mais caminhos que alcançam a
+Quanto maior for o tamanho máximo dos caminhos mais caminhos que alcançam a
 posição alvo iremos encontrar:
 \end{propriedade}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{prop\char95 reach}\;\Varid{m}\;\Varid{t}\;\Varid{n}\;\Varid{n'}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{prop\char95 reach}\;\Varid{m}\;\Varid{t}\;\Varid{n}\;\Varid{n'}\mathrel{=}(\Varid{n}\mathbin{>}\Varid{n'})\mathrel{\wedge}(\length \;(\Varid{scout}\;\Varid{m}\;(\mathrm{0},\mathrm{0})\;\Varid{t}\;\Varid{n})\mathbin{>}\length \;(\Varid{scout}\;\Varid{m}\;(\mathrm{0},\mathrm{0})\;\Varid{t}\;\Varid{n'})){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 

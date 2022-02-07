@@ -116,6 +116,7 @@
 \indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{13}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{13}
 \indexentry{Função!\emph  {map}|hyperpage}{13}
+\indexentry{Cálculo de Programas!Material Pedagógico!LTree.hs|hyperpage}{15}
 \indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{15}
 \indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{15}
 \indexentry{Função!\emph  {length}|hyperpage}{15}
@@ -125,11 +126,11 @@
 \indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
 \indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
 \indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
+\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
+\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
+\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
+\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
 \indexentry{Função!$\pi _1$|hyperpage}{15}
-\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
-\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
-\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
-\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{15}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{16}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{16}
 \indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{16}
@@ -139,14 +140,18 @@
 \indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{17}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{17}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{17}
-\indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{17}
 \indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{17}
 \indexentry{Cálculo de Programas!Material Pedagógico!FTree.hs|hyperpage}{17}
 \indexentry{Função!\emph  {map}|hyperpage}{17}
+\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{17}
+\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{17}
 \indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{17}
 \indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{17}
-\indexentry{Functor|hyperpage}{17}
-\indexentry{Functor|hyperpage}{17}
+\indexentry{Função!$\pi _1$|hyperpage}{17}
+\indexentry{Função!$\pi _2$|hyperpage}{17}
+\indexentry{Função!\emph  {length}|hyperpage}{18}
+\indexentry{Functor|hyperpage}{18}
+\indexentry{Functor|hyperpage}{18}
 \indexentry{Função!$\pi _1$|hyperpage}{18}
 \indexentry{Função!$\pi _2$|hyperpage}{18}
 \indexentry{Função!$\pi _2$|hyperpage}{18}
@@ -158,32 +163,47 @@
 \indexentry{Função!$\pi _1$|hyperpage}{18}
 \indexentry{Função!$\pi _1$|hyperpage}{18}
 \indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{18}
-\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{18}
-\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{18}
-\indexentry{Função!$\pi _1$|hyperpage}{18}
-\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{18}
-\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{18}
-\indexentry{Função!$\pi _1$|hyperpage}{18}
-\indexentry{Função!$\pi _2$|hyperpage}{18}
-\indexentry{Função!$\pi _2$|hyperpage}{18}
-\indexentry{Função!\emph  {succ}|hyperpage}{18}
-\indexentry{Função!$\pi _1$|hyperpage}{18}
-\indexentry{Função!$\pi _2$|hyperpage}{18}
-\indexentry{Função!$\pi _1$|hyperpage}{18}
-\indexentry{Função!$\pi _2$|hyperpage}{18}
-\indexentry{Função!$\pi _1$|hyperpage}{18}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{19}
+\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{19}
+\indexentry{Função!$\pi _1$|hyperpage}{19}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{19}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{19}
+\indexentry{Função!$\pi _1$|hyperpage}{19}
+\indexentry{Função!$\pi _2$|hyperpage}{19}
+\indexentry{Função!$\pi _2$|hyperpage}{19}
+\indexentry{Função!\emph  {succ}|hyperpage}{19}
+\indexentry{Função!$\pi _1$|hyperpage}{19}
+\indexentry{Função!$\pi _2$|hyperpage}{19}
+\indexentry{Função!$\pi _1$|hyperpage}{19}
+\indexentry{Função!$\pi _2$|hyperpage}{19}
+\indexentry{Função!$\pi _1$|hyperpage}{19}
 \indexentry{Função!\emph  {uncurry}|hyperpage}{19}
 \indexentry{Função!\emph  {uncurry}|hyperpage}{19}
 \indexentry{Função!\emph  {uncurry}|hyperpage}{19}
 \indexentry{Função!\emph  {uncurry}|hyperpage}{19}
 \indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{19}
-\indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{19}
-\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{20}
-\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{20}
-\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{20}
-\indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{20}
-\indexentry{Haskell!QuickCheck|hyperpage}{20}
-\indexentry{Função!\emph  {map}|hyperpage}{20}
+\indexentry{Função!\emph  {uncurry}|hyperpage}{19}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{19}
+\indexentry{Função!\emph  {map}|hyperpage}{19}
+\indexentry{Combinador ``pointfree''!\emph  {ana}!Listas|hyperpage}{20}
+\indexentry{Combinador ``pointfree''!\emph  {cata}|hyperpage}{20}
+\indexentry{Função!\emph  {uncurry}|hyperpage}{20}
 \indexentry{Função!$\pi _1$|hyperpage}{20}
-\indexentry{Função!\emph  {map}|hyperpage}{20}
-\indexentry{Função!$\pi _2$|hyperpage}{20}
+\indexentry{Função!\emph  {uncurry}|hyperpage}{20}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{21}
+\indexentry{Combinador ``pointfree''!\emph  {cata}!Listas|hyperpage}{21}
+\indexentry{Função!\emph  {uncurry}|hyperpage}{21}
+\indexentry{Função!$\pi _1$|hyperpage}{21}
+\indexentry{Combinador ``pointfree''!\emph  {either}|hyperpage}{21}
+\indexentry{Combinador ``pointfree''!\emph  {cata}!Naturais|hyperpage}{21}
+\indexentry{Haskell!QuickCheck|hyperpage}{21}
+\indexentry{Função!\emph  {map}|hyperpage}{21}
+\indexentry{Função!$\pi _1$|hyperpage}{21}
+\indexentry{Função!\emph  {map}|hyperpage}{21}
+\indexentry{Função!$\pi _2$|hyperpage}{21}
+\indexentry{Função!\emph  {length}|hyperpage}{21}
+\indexentry{Função!\emph  {map}|hyperpage}{21}
+\indexentry{Função!$\pi _1$|hyperpage}{22}
+\indexentry{Função!$\pi _2$|hyperpage}{22}
+\indexentry{Função!\emph  {length}|hyperpage}{22}
+\indexentry{Função!\emph  {length}|hyperpage}{22}
